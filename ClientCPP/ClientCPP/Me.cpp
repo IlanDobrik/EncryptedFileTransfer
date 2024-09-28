@@ -36,3 +36,4 @@ Me getMe(const std::string& mePath) {
         getPrivateKey(configFile),
     };
 }
+

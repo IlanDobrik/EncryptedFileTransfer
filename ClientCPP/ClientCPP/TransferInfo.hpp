@@ -15,4 +15,4 @@ struct TransferInfo {
     std::string filePath;
 };
 
-TransferInfo getTransferInfo(std::string transferInfoPath);
+TransferInfo getTransferInfo(const std::string& transferInfoPath);

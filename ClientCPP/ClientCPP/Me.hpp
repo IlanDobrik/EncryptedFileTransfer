@@ -10,4 +10,4 @@ struct Me {
     std::string privateKey;
 };
 
-Me getMe(std::string mePath);
+Me getMe(const std::string& mePath);
