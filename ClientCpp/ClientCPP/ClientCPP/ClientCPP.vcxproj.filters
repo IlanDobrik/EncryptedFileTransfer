@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TransferInfo.cpp">
+      <Filter>TransferInfo</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="TransferInfo">
+      <UniqueIdentifier>{2b8bd44c-cd81-4f55-a0d3-76bd2fa2c071}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TransferInfo.hpp">
+      <Filter>TransferInfo</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
