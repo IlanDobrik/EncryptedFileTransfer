@@ -6,12 +6,9 @@
 #include "modes.h"
 
 
-static constexpr size_t AES_KEY_SIZE = 256 / 8;
-static constexpr size_t IV_SIZE = 256 / 8;
 
-
-AES::AES(const Buffer& key, const Buffer& iv = Buffer(0, IV_SIZE)) :
-    m_key(key), m_iv(iv)
+AES::AES(const Buffer& key, const Buffer& iv) :
+    m_key(key), m_iv(Buffer(IV_SIZE, 0))
 { }
 
 Buffer AES::encrypt(const Buffer& input) {

@@ -1,29 +1,16 @@
 #include "TransferInfo.hpp"
+#include "Common.hpp"
 
 
 IPAddress getIP(std::ifstream& transferInfoFile) {
-    std::string line;
-    std::getline(transferInfoFile, line);
-
+    std::string line = getLine(transferInfoFile);
+    
     uint32_t port = std::atoi(line.substr(line.find(':') + 1).c_str());
     std::string ip = line.substr(0, line.find(':'));
 
     return IPAddress{ ip, port };
 }
 
-std::string getClientName(std::ifstream& transferInfoFile) {
-    std::string line;
-    std::getline(transferInfoFile, line);
-
-    return line;
-}
-
-std::string getFilePath(std::ifstream& transferInfoFile) {
-    std::string line;
-    std::getline(transferInfoFile, line);
-
-    return line;
-}
 
 TransferInfo getTransferInfo(const std::string& transferInfoPath) {
     std::ifstream configFile(transferInfoPath);
@@ -34,7 +21,7 @@ TransferInfo getTransferInfo(const std::string& transferInfoPath) {
 
     return TransferInfo{
         getIP(configFile),
-        getClientName(configFile),
-        getFilePath(configFile),
+        getLine(configFile),
+        getLine(configFile),
     };
 }

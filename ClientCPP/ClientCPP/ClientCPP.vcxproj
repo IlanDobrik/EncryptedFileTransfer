@@ -137,6 +137,7 @@
     <ClCompile Include="AESEncryption.cpp" />
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="Base64.hpp" />
+    <ClCompile Include="Common.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Me.cpp" />
     <ClCompile Include="RSAEncryption.cpp" />

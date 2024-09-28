@@ -1,28 +1,6 @@
 #include "Me.hpp"
 
 
-std::string getName(std::ifstream& meFile) {
-    std::string line;
-    std::getline(meFile, line);
-
-    return line;
-}
-
-std::string getUUID(std::ifstream& meFile) {
-    std::string line;
-    std::getline(meFile, line);
-
-    return line;
-}
-
-Buffer getPrivateKey(std::ifstream& meFile) {
-    std::string line;
-    std::getline(meFile, line);
-
-    return Buffer(line.begin(), line.end());;
-}
-
-
 Me getMe(const std::string& mePath) {
     std::ifstream configFile(mePath);
 
@@ -31,9 +9,9 @@ Me getMe(const std::string& mePath) {
     }
 
     return Me{
-        getName(configFile),
-        getUUID(configFile),
-        getPrivateKey(configFile),
+        getLine(configFile),
+        getLine(configFile),
+        getLineBin(configFile),
     };
 }
 
