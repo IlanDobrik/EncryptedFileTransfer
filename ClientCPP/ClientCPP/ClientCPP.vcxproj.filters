@@ -8,6 +8,18 @@
       <Filter>TransferInfo</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="AESEncryption.cpp">
+      <Filter>Encryption</Filter>
+    </ClCompile>
+    <ClCompile Include="RSAEncryption.cpp">
+      <Filter>Encryption</Filter>
+    </ClCompile>
+    <ClCompile Include="Base64.hpp">
+      <Filter>Encryption</Filter>
+    </ClCompile>
+    <ClCompile Include="Base64.cpp">
+      <Filter>Encryption</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">
@@ -15,6 +27,9 @@
     </Filter>
     <Filter Include="Me">
       <UniqueIdentifier>{cfbef944-f857-4711-b34d-0152e6556f71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Encryption">
+      <UniqueIdentifier>{253ca905-971f-40d2-9c68-4d10c584aa6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +39,13 @@
     <ClInclude Include="TransferInfo.hpp">
       <Filter>TransferInfo</Filter>
     </ClInclude>
+    <ClInclude Include="AESEncryption.hpp">
+      <Filter>Encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="RSAEncryption.hpp">
+      <Filter>Encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="me.info">

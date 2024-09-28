@@ -3,11 +3,12 @@
 #include <fstream>
 #include <string>
 
+#include "Common.hpp"
 
 struct Me {
     std::string name;
     std::string UUID; 
-    std::string privateKey;
+    Buffer privateKey; // Is this AES?
 };
 
 Me getMe(const std::string& mePath);

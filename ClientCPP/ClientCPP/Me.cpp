@@ -15,11 +15,11 @@ std::string getUUID(std::ifstream& meFile) {
     return line;
 }
 
-std::string getPrivateKey(std::ifstream& meFile) {
+Buffer getPrivateKey(std::ifstream& meFile) {
     std::string line;
     std::getline(meFile, line);
 
-    return line;
+    return Buffer(line.begin(), line.end());;
 }
 
 
