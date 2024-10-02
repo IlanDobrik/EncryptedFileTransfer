@@ -13,6 +13,8 @@ public:
     Buffer encrypt(const Buffer& input);
     Buffer decrypt(const Buffer& cipher_text);
 
+    static Buffer GenerateKey();
+
 private:
     const Buffer m_key;
     const Buffer m_iv;

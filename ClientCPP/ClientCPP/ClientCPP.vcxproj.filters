@@ -20,7 +20,9 @@
     <ClCompile Include="Base64.cpp">
       <Filter>Encryption</Filter>
     </ClCompile>
-    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">
@@ -31,6 +33,9 @@
     </Filter>
     <Filter Include="Encryption">
       <UniqueIdentifier>{253ca905-971f-40d2-9c68-4d10c584aa6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{7187eb3d-e405-42a4-8b1f-b8f8ab12ac35}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +51,9 @@
     <ClInclude Include="RSAEncryption.hpp">
       <Filter>Encryption</Filter>
     </ClInclude>
-    <ClInclude Include="Common.hpp" />
+    <ClInclude Include="Common.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="me.info">
