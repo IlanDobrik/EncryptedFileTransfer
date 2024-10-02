@@ -2,9 +2,11 @@ import threading
 import os
 import logging
 import socket
+import struct
 
 import Config
-from ClientThread import ClientThread, Request
+from ClientThread import ClientThread
+import Requests
 
 
 def listen4clients(listenPort):
@@ -30,7 +32,10 @@ def loadPort():
         return portFile.readline()
 
 def main():
-    r = Request(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x02\x02\x00\x00\x00\x01\x00')
+    x = struct.pack(Requests.Request.GENERIC_REQUEST_FORMAT, b'1',2,3,4)
+    y = struct.pack("255s", b'1')
+    
+    r = Requests.RegisterRequest(x + y)
     config = Config.read_config()
     listen4clients(config.port)
     # t = threading.Thread(target=listen4clients, args=(loadPort()))
