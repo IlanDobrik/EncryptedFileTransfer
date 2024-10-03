@@ -1,3 +1,8 @@
+SERVER_VERSION = 1
+CLIENT_ID_SIZE = 16
+
+
+
 CONFIG_FILE_PATH = "./port.info"
 
 class Config:

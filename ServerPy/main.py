@@ -7,6 +7,7 @@ import struct
 import Config
 from ClientThread import ClientThread
 import Requests
+import Responses
 
 
 def listen4clients(listenPort):
@@ -34,6 +35,9 @@ def loadPort():
 def main():
     x = struct.pack(Requests.Request.GENERIC_REQUEST_FORMAT, b'1',2,3,4)
     y = struct.pack("255s", b'1')
+    
+    # a = Responses.AckResponse(b"1313").pack()
+    a = Responses.EncryptedAESResponse(client_id=b"1313", aes_key=b"1"*16).pack()
     
     r = Requests.RegisterRequest(x + y)
     config = Config.read_config()

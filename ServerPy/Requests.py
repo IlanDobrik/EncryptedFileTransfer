@@ -1,4 +1,5 @@
 import struct
+import Config
 
 
 def unpack_and_move(format, buffer):
@@ -11,8 +12,7 @@ def unpack_and_move(format, buffer):
 
 class Request:
     CODE = 0 # each request must fill
-    CLIENT_ID_SIZE = 16
-    GENERIC_REQUEST_FORMAT = f"{CLIENT_ID_SIZE}sBHL"
+    GENERIC_REQUEST_FORMAT = f">{Config.CLIENT_ID_SIZE}sBHL"
     
     def __init__(self, data) -> None:
         self.payload, self.clientID, self.version, self.code, self.payload_size = unpack_and_move(self.GENERIC_REQUEST_FORMAT, data)
