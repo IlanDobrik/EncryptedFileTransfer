@@ -55,10 +55,6 @@ class OkCRCRequest(Request):
         
 class BadCRCRequest(OkCRCRequest):
     CODE = 901
-    def __init__(self, data) -> None:
-        super().__init__(data)
 
 class FinalBadCRCRequest(OkCRCRequest):
     CODE = 902
-    def __init__(self, data) -> None:
-        super().__init__(data)

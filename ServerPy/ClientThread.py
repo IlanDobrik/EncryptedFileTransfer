@@ -26,6 +26,8 @@ class ClientThread(threading.Thread):
             # Registration is
             self.key_exchange()
             
+            # State machine
+            
             
         except Exception as e:
             logging.error("Caught exception {e}")

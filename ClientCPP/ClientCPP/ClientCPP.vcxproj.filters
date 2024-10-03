@@ -23,6 +23,15 @@
     <ClCompile Include="Common.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="IRequest.cpp">
+      <Filter>Requests\IRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="IRequest.h">
+      <Filter>Requests\IRequest</Filter>
+    </ClCompile>
+    <ClCompile Include="RegisterRequest.cpp">
+      <Filter>Requests\Register</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">
@@ -36,6 +45,18 @@
     </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{7187eb3d-e405-42a4-8b1f-b8f8ab12ac35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Requests">
+      <UniqueIdentifier>{0e0acdb7-06e0-479b-bbea-87482e9a4c9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Response">
+      <UniqueIdentifier>{e48f0d72-fe4a-4571-847b-6d7e15b66ab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Requests\IRequest">
+      <UniqueIdentifier>{7cbf855b-1810-40dd-8e20-04f764cf5004}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Requests\Register">
+      <UniqueIdentifier>{748a3f38-265c-4567-92a8-8f24f7b21053}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +74,12 @@
     </ClInclude>
     <ClInclude Include="Common.hpp">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Hardcoded.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisterRequest.h">
+      <Filter>Requests\Register</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -24,26 +24,9 @@ def listen4clients(listenPort):
         newthread = ClientThread(clientAddress, clientsock)
         newthread.start()
 
-def loadPort():
-    if not os.path.exists(Config.PORT_INFO_PATH):
-        logging.error(f"Port file in path {Config.PORT_INFO_PATH} not found")
-        return 1256
-    
-    with open(Config.PORT_INFO_PATH, "r") as portFile:
-        return portFile.readline()
-
 def main():
-    x = struct.pack(Requests.Request.GENERIC_REQUEST_FORMAT, b'1',2,3,4)
-    y = struct.pack("255s", b'1')
-    
-    # a = Responses.AckResponse(b"1313").pack()
-    a = Responses.EncryptedAESResponse(client_id=b"1313", aes_key=b"1"*16).pack()
-    
-    r = Requests.RegisterRequest(x + y)
     config = Config.read_config()
     listen4clients(config.port)
-    # t = threading.Thread(target=listen4clients, args=(loadPort()))
-    # t.start()
 
 if __name__ == '__main__':
     try:

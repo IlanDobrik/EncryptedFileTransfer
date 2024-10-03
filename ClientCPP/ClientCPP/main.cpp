@@ -11,10 +11,25 @@
 #include "Base64.hpp"
 #include "AESEncryption.hpp"
 
+#include "RegisterRequest.h"
+#include "Common.hpp"
+#include "Hardcoded.h"
+
+#include <array>
+
 
 int main(void) {
     auto config = getTransferInfo(TRANSFER_INFO_PATH);
     auto me = getMe(ME_PATH);
+
+   {
+        ClientID clientId {0};
+        ClientName clientName{0};
+        RegisterRequest rr(clientId, clientName);
+
+        auto out = rr.serialize();
+        std::cout << out.size();
+   }
 
     // generate_keys();
     std::string message = "Hello yuval";

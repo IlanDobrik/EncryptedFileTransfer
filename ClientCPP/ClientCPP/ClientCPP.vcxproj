@@ -138,15 +138,20 @@
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="Base64.hpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="IRequest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Me.cpp" />
+    <ClCompile Include="IRequest.h" />
+    <ClCompile Include="RegisterRequest.cpp" />
     <ClCompile Include="RSAEncryption.cpp" />
     <ClCompile Include="TransferInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AESEncryption.hpp" />
     <ClInclude Include="Common.hpp" />
+    <ClInclude Include="Hardcoded.h" />
     <ClInclude Include="Me.hpp" />
+    <ClInclude Include="RegisterRequest.h" />
     <ClInclude Include="RSAEncryption.hpp" />
     <ClInclude Include="TransferInfo.hpp" />
   </ItemGroup>
