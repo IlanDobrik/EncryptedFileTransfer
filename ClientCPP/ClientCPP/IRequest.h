@@ -14,7 +14,7 @@ protected:
 	virtual Buffer _serialize() = 0;
 
 private:
-	Buffer serializeHeader();
+	Buffer serializeHeader(const PayloadSize payloadSize);
 
 private:
 	Version m_version;

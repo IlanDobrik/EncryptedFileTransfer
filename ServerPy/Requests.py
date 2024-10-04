@@ -12,10 +12,13 @@ def unpack_and_move(format, buffer):
 
 class Request:
     CODE = 0 # each request must fill
-    GENERIC_REQUEST_FORMAT = f">{Config.CLIENT_ID_SIZE}sBHL"
+    GENERIC_REQUEST_FORMAT = f"<{Config.CLIENT_ID_SIZE}sBHL"
     
     def __init__(self, data) -> None:
-        self.payload, self.clientID, self.version, self.code, self.payload_size = unpack_and_move(self.GENERIC_REQUEST_FORMAT, data)
+        leftover, self.clientID, self.version, self.code, self.payload_size = unpack_and_move(self.GENERIC_REQUEST_FORMAT, data)
+        if leftover.__len__() < self.payload_size:
+            raise "Payload data smaller than payload size"
+        self.payload = leftover[:self.payload_size]
 
 class RegisterRequest(Request):
     CODE = 825
@@ -34,8 +37,6 @@ class PublicKeyRequest(RegisterRequest):
 
 class ReConnectRequest(RegisterRequest):
     CODE = 827
-    def __init__(self, data) -> None:
-        super().__init__(data)
 
 class SendFileRequest(Request):
     CODE = 828

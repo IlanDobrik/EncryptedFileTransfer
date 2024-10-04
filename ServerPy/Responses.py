@@ -3,7 +3,7 @@ import struct
 import Config
 
 class Response:
-    RESPONSE_FORMAT = f">BHL"
+    RESPONSE_FORMAT = f"<BHL"
     CODE = 0
     
     def __init__(self) -> None:

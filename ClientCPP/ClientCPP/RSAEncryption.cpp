@@ -57,3 +57,8 @@ Buffer RSA::decrypt(const Buffer& to_decrypt) {
 
     return recovered;
 }
+
+CryptoPP::RSA::PublicKey RSA::getPublicKey()
+{
+    return m_pubKey;
+}

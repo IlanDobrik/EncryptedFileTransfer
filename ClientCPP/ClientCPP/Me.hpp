@@ -4,9 +4,10 @@
 #include <string>
 
 #include "Common.hpp"
+#include "Hardcoded.h"
 
 struct Me {
-    std::string name;
+    ClientName name;
     std::string UUID; 
     Buffer privateKey; // Is this AES?
 };

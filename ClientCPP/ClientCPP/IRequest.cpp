@@ -1,6 +1,5 @@
 #include "IRequest.h"
 
-constexpr uint8_t HEADER_SIZE = sizeof(ClientID) + sizeof(Version) + sizeof(Code) + sizeof(PayloadSize);
 
 IRequest::IRequest(const ClientID& clientId, const Code& code) :
 	m_clientID(clientId), m_code(code), m_version(CLIENT_VERSION)
@@ -9,7 +8,7 @@ IRequest::IRequest(const ClientID& clientId, const Code& code) :
 Buffer IRequest::serialize()
 {
 	Buffer payload = _serialize();
-	Buffer header = serializeHeader();
+	Buffer header = serializeHeader(payload.size());
 	Buffer out;
 
 	out.insert(out.end(), header.cbegin(), header.cend());
@@ -18,10 +17,10 @@ Buffer IRequest::serialize()
 	return out;
 }
 
-Buffer IRequest::serializeHeader()
+Buffer IRequest::serializeHeader(const PayloadSize payloadSize)
 {
-	Buffer header(HEADER_SIZE, 0);
-	uint8_t* data = header.data();
+	Buffer header(REQUEST_HEADER_SIZE, 0);
+	uint8_t* data = header.data(); // TODO remove raw pointer?
 
 	memcpy(data, m_clientID.data(), m_clientID.size());
 	data += m_clientID.size();
@@ -31,6 +30,9 @@ Buffer IRequest::serializeHeader()
 
 	memcpy(data, &m_code, sizeof(m_code));
 	data += sizeof(m_code);
+
+	memcpy(data, &payloadSize, sizeof(payloadSize));
+	data += sizeof(payloadSize);
 
 	return header;
 }

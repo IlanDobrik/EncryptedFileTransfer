@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 
+#include "Hardcoded.h"
+
 
 struct IPAddress {
     std::string ip;
@@ -11,7 +13,7 @@ struct IPAddress {
 
 struct TransferInfo {
     IPAddress ipAddress;
-    std::string clientName; // TODO limit 100
+    ClientName clientName; // TODO limit 100
     std::string filePath;
 };
 

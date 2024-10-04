@@ -32,6 +32,24 @@
     <ClCompile Include="RegisterRequest.cpp">
       <Filter>Requests\Register</Filter>
     </ClCompile>
+    <ClCompile Include="AesRequest.cpp">
+      <Filter>Requests\Aes</Filter>
+    </ClCompile>
+    <ClCompile Include="ReconnectRequest.cpp">
+      <Filter>Requests\Reconnect</Filter>
+    </ClCompile>
+    <ClCompile Include="IResponse.cpp">
+      <Filter>Responses\IResponse</Filter>
+    </ClCompile>
+    <ClCompile Include="SuccessfulRegisterResponse.cpp">
+      <Filter>Responses\SuccessfulRegister</Filter>
+    </ClCompile>
+    <ClCompile Include="Connection.cpp">
+      <Filter>Connection</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">
@@ -49,14 +67,32 @@
     <Filter Include="Requests">
       <UniqueIdentifier>{0e0acdb7-06e0-479b-bbea-87482e9a4c9a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Response">
-      <UniqueIdentifier>{e48f0d72-fe4a-4571-847b-6d7e15b66ab3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Requests\IRequest">
       <UniqueIdentifier>{7cbf855b-1810-40dd-8e20-04f764cf5004}</UniqueIdentifier>
     </Filter>
     <Filter Include="Requests\Register">
       <UniqueIdentifier>{748a3f38-265c-4567-92a8-8f24f7b21053}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Requests\Reconnect">
+      <UniqueIdentifier>{dc6cec43-a44d-46ed-a0fb-a768a556002b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Requests\Aes">
+      <UniqueIdentifier>{d64c8f99-8552-4754-9be1-8a07fe595f26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Responses">
+      <UniqueIdentifier>{195eb613-3b98-4324-9970-536601ab130b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Responses\IResponse">
+      <UniqueIdentifier>{96613ec4-d533-4411-b93d-d8f44b2a297b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Responses\SuccessfulRegister">
+      <UniqueIdentifier>{ff404d1c-a5fc-4fc7-b38c-dd599835d244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Connection">
+      <UniqueIdentifier>{368cd0ca-2908-4940-ba15-0948566277b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Client">
+      <UniqueIdentifier>{083b815e-d683-4627-8711-4d6c777e1583}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +116,24 @@
     </ClInclude>
     <ClInclude Include="RegisterRequest.h">
       <Filter>Requests\Register</Filter>
+    </ClInclude>
+    <ClInclude Include="AesRequest.h">
+      <Filter>Requests\Aes</Filter>
+    </ClInclude>
+    <ClInclude Include="ReconnectRequest.h">
+      <Filter>Requests\Reconnect</Filter>
+    </ClInclude>
+    <ClInclude Include="IResponse.h">
+      <Filter>Responses\IResponse</Filter>
+    </ClInclude>
+    <ClInclude Include="SuccessfulRegisterResponse.h">
+      <Filter>Responses\SuccessfulRegister</Filter>
+    </ClInclude>
+    <ClInclude Include="Connection.h">
+      <Filter>Connection</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

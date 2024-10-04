@@ -5,6 +5,8 @@ import logging
 from CryptoUtils import SymetricKey
 from cksum import memcrc
 
+import Requests
+
 
 class ClientThread(threading.Thread):
     def __init__(self, clientAddress: socket.socket, clientsocket: socket.AddressInfo):
@@ -22,7 +24,9 @@ class ClientThread(threading.Thread):
 
     def run(self):
         try:
-            res = self.csocket.recv(1024).decode()
+            res = self.csocket.recv(1024)
+            x = Requests.RegisterRequest(res)
+            
             # Registration is
             self.key_exchange()
             

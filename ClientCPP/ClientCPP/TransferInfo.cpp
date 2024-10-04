@@ -11,17 +11,25 @@ IPAddress getIP(std::ifstream& transferInfoFile) {
     return IPAddress{ ip, port };
 }
 
+ClientName getClientName(std::ifstream& transferInfoFile) {
+    Buffer clientNameBin = getLineBin(transferInfoFile);
+    ClientName clientname{0};
+    std::copy(clientNameBin.begin(), clientNameBin.end(), clientname.begin());
+
+    return clientname;
+}
+
 
 TransferInfo getTransferInfo(const std::string& transferInfoPath) {
-    std::ifstream configFile(transferInfoPath);
+    std::ifstream transferInfoFile(transferInfoPath);
 
-    if (!configFile.is_open()) {
+    if (!transferInfoFile.is_open()) {
         throw std::exception("Failed to open file. Check path");
     }
 
     return TransferInfo{
-        getIP(configFile),
-        getLine(configFile),
-        getLine(configFile),
+        getIP(transferInfoFile),
+        getClientName(transferInfoFile),
+        getLine(transferInfoFile),
     };
 }

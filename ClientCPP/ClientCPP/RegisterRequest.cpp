@@ -1,8 +1,8 @@
 #include "RegisterRequest.h"
 
 
-RegisterRequest::RegisterRequest(const ClientID& clientID, const ClientName& clientName) : 
-	IRequest(clientID, REGISTER_REQUEST_CODE), m_name(clientName)
+RegisterRequest::RegisterRequest(const ClientName& clientName) : 
+	IRequest(ClientID(), REGISTER_REQUEST_CODE), m_name(clientName)
 { }
 
 Buffer RegisterRequest::_serialize()

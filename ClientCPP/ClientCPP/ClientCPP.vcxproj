@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);C:\Projects\Uni\Defensive\cryptopp890\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);C:\Projects\Uni\Defensive\cryptopp890\;C:\Projects\Uni\Defensive\boost_1_86_0\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -135,24 +135,36 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AESEncryption.cpp" />
+    <ClCompile Include="AesRequest.cpp" />
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="Base64.hpp" />
+    <ClCompile Include="Client.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Connection.cpp" />
     <ClCompile Include="IRequest.cpp" />
+    <ClCompile Include="IResponse.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Me.cpp" />
     <ClCompile Include="IRequest.h" />
+    <ClCompile Include="ReconnectRequest.cpp" />
     <ClCompile Include="RegisterRequest.cpp" />
     <ClCompile Include="RSAEncryption.cpp" />
+    <ClCompile Include="SuccessfulRegisterResponse.cpp" />
     <ClCompile Include="TransferInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AESEncryption.hpp" />
+    <ClInclude Include="AesRequest.h" />
+    <ClInclude Include="Client.h" />
     <ClInclude Include="Common.hpp" />
+    <ClInclude Include="Connection.h" />
     <ClInclude Include="Hardcoded.h" />
+    <ClInclude Include="IResponse.h" />
     <ClInclude Include="Me.hpp" />
+    <ClInclude Include="ReconnectRequest.h" />
     <ClInclude Include="RegisterRequest.h" />
     <ClInclude Include="RSAEncryption.hpp" />
+    <ClInclude Include="SuccessfulRegisterResponse.h" />
     <ClInclude Include="TransferInfo.hpp" />
   </ItemGroup>
   <ItemGroup>

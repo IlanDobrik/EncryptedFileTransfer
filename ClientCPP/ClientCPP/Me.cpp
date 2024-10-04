@@ -5,11 +5,15 @@ Me getMe(const std::string& mePath) {
     std::ifstream configFile(mePath);
 
     if (!configFile.is_open()) {
-        throw std::exception("Failed to open file. Check path");
+        return Me{};
     }
 
+    Buffer clientNameBin = getLineBin(configFile);
+    ClientName clientname{0};
+    std::copy(clientNameBin.begin(), clientNameBin.end(), clientname.begin());
+
     return Me{
-        getLine(configFile),
+        clientname,
         getLine(configFile),
         getLineBin(configFile),
     };

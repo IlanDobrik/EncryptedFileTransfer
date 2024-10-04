@@ -14,3 +14,9 @@ using PayloadSize = uint32_t;
 // RegisterRequest
 using ClientName = std::array<uint8_t, 255>;
 
+// AesRequest
+using PublicKey = std::array<uint8_t, 160>;
+
+
+constexpr uint8_t REQUEST_HEADER_SIZE = sizeof(ClientID) + sizeof(Version) + sizeof(Code) + sizeof(PayloadSize);
+constexpr uint8_t RESPONSE_HEADER_SIZE = sizeof(Version) + sizeof(Code) + sizeof(PayloadSize);
