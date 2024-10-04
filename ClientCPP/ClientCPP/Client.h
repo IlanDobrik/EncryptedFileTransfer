@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 
 #include "Connection.h"
 #include "Me.hpp"
@@ -15,11 +16,17 @@ public:
 	Client(std::unique_ptr<Connection> connection, const RSA& rsa, const AES& aes, const Me& me, const TransferInfo& transferInfo);
 	void uploadFile(const std::string& filePath);
 
+
+private:
+	static void attemptXTimes(const uint32_t maxRetries, std::function<void()>);
+	void registerClient();
+	void exchangeKeys();
+
 private:
 	std::unique_ptr<Connection> m_connection;
 	RSA m_rsa;
-	AES m_aes;
-	const Me m_me;
+	std::unique_ptr<AES> m_aes;
+	Me m_me;
 	const TransferInfo m_transferInfo;
 
 };

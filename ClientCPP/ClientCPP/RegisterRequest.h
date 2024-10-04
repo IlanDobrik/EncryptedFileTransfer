@@ -7,7 +7,7 @@
 
 constexpr Code REGISTER_REQUEST_CODE = 825;
 
-class RegisterRequest : public IRequest {
+class RegisterRequest : public Request {
 public:
 	RegisterRequest(const ClientName& clientName);
 	virtual ~RegisterRequest() = default;

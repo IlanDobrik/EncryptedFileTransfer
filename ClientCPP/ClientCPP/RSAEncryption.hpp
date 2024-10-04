@@ -4,6 +4,7 @@
 
 #include "rsa.h"
 #include "common.hpp"
+#include "Hardcoded.h"
 
 
 class RSA {
@@ -12,7 +13,7 @@ public:
     Buffer encrypt(const Buffer& to_encrypt);
     Buffer decrypt(const Buffer& to_decrypt);
 
-    CryptoPP::RSA::PublicKey getPublicKey();
+    PublicKey getPublicKey();
 
 private:
     CryptoPP::RSA::PrivateKey m_privKey;

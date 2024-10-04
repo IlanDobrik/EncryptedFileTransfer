@@ -1,14 +1,14 @@
 #include "IRequest.h"
 
 
-IRequest::IRequest(const ClientID& clientId, const Code& code) :
+Request::Request(const ClientID& clientId, const Code& code) :
 	m_clientID(clientId), m_code(code), m_version(CLIENT_VERSION)
 { }
 
-Buffer IRequest::serialize()
+Buffer Request::serialize()
 {
 	Buffer payload = _serialize();
-	Buffer header = serializeHeader(payload.size());
+	Buffer header = serializeHeader(static_cast<PayloadSize>(payload.size()));
 	Buffer out;
 
 	out.insert(out.end(), header.cbegin(), header.cend());
@@ -17,7 +17,12 @@ Buffer IRequest::serialize()
 	return out;
 }
 
-Buffer IRequest::serializeHeader(const PayloadSize payloadSize)
+Buffer Request::_serialize()
+{
+	return Buffer();
+}
+
+Buffer Request::serializeHeader(const PayloadSize payloadSize)
 {
 	Buffer header(REQUEST_HEADER_SIZE, 0);
 	uint8_t* data = header.data(); // TODO remove raw pointer?

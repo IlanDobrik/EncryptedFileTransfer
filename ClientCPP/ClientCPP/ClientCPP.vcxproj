@@ -136,11 +136,13 @@
   <ItemGroup>
     <ClCompile Include="AESEncryption.cpp" />
     <ClCompile Include="AesRequest.cpp" />
+    <ClCompile Include="AesResponse.cpp" />
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="Base64.hpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="FailedRegisterResponse.h" />
     <ClCompile Include="IRequest.cpp" />
     <ClCompile Include="IResponse.cpp" />
     <ClCompile Include="main.cpp" />
@@ -155,6 +157,7 @@
   <ItemGroup>
     <ClInclude Include="AESEncryption.hpp" />
     <ClInclude Include="AesRequest.h" />
+    <ClInclude Include="AesResponse.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Connection.h" />
@@ -168,7 +171,6 @@
     <ClInclude Include="TransferInfo.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="me.info" />
     <None Include="transfer.info" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

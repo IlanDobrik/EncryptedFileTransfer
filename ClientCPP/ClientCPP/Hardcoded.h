@@ -4,6 +4,7 @@
 #include <array>
 
 constexpr uint8_t CLIENT_VERSION = 1;
+constexpr uint32_t MAX_RETRY_COUNT = 3;
 
 // IRequest
 using Version = uint8_t;

@@ -3,15 +3,17 @@ import socket
 import logging
 
 from CryptoUtils import SymetricKey
+import Utils
 from cksum import memcrc
 
 import Requests
+import Responses
 
 
 class ClientThread(threading.Thread):
     def __init__(self, clientAddress: socket.socket, clientsocket: socket.AddressInfo):
         threading.Thread.__init__(self, daemon=True)
-        self.csocket = clientsocket
+        self.csocket: socket.socket = clientsocket
         self.caddress = clientAddress
 
     def key_exchange(self):
@@ -20,17 +22,14 @@ class ClientThread(threading.Thread):
         self.csocket.send(symetric_key.get_encrypted_session_key())
 
     def register(self):
-        pass
+        self.csocket.sendall(Responses.SuccessfulRegisterResponse(Utils.generateUUID().encode()))
 
     def run(self):
         try:
-            res = self.csocket.recv(1024)
-            x = Requests.RegisterRequest(res)
+            request = Requests.Request(self.csocket.recv(1024))
             
-            # Registration is
-            self.key_exchange()
-            
-            # State machine
+            if request == Requests.RegisterRequest.CODE:
+                self.register()
             
             
         except Exception as e:

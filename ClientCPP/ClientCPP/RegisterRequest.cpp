@@ -2,7 +2,7 @@
 
 
 RegisterRequest::RegisterRequest(const ClientName& clientName) : 
-	IRequest(ClientID(), REGISTER_REQUEST_CODE), m_name(clientName)
+	Request(ClientID{0}, REGISTER_REQUEST_CODE), m_name(clientName)
 { }
 
 Buffer RegisterRequest::_serialize()

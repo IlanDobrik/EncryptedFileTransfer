@@ -50,6 +50,12 @@
     <ClCompile Include="Client.cpp">
       <Filter>Client</Filter>
     </ClCompile>
+    <ClCompile Include="FailedRegisterResponse.h">
+      <Filter>Responses\FailedRegister</Filter>
+    </ClCompile>
+    <ClCompile Include="AesResponse.cpp">
+      <Filter>Responses\Aes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">
@@ -94,6 +100,12 @@
     <Filter Include="Client">
       <UniqueIdentifier>{083b815e-d683-4627-8711-4d6c777e1583}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Responses\FailedRegister">
+      <UniqueIdentifier>{ec8992af-3e93-4106-9c67-b921cf3f5a5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Responses\Aes">
+      <UniqueIdentifier>{7a844e31-dea9-49a6-82e8-83b42ef13d81}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Me.hpp">
@@ -135,11 +147,11 @@
     <ClInclude Include="Client.h">
       <Filter>Client</Filter>
     </ClInclude>
+    <ClInclude Include="AesResponse.h">
+      <Filter>Responses\Aes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="me.info">
-      <Filter>Me</Filter>
-    </None>
     <None Include="transfer.info">
       <Filter>TransferInfo</Filter>
     </None>

@@ -3,10 +3,12 @@
 #include "Common.hpp"
 #include "Hardcoded.h"
 
-class IResponse
+class Response
 {
 public:
-	IResponse(const Buffer& input); 
+	Response(const Buffer& input); 
+
+	Code getCode() const;
 
 protected:
 	Version m_version;

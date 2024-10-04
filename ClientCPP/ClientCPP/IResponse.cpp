@@ -1,6 +1,6 @@
 #include "IResponse.h"
 
-IResponse::IResponse(const Buffer& input)
+Response::Response(const Buffer& input)
 {
 	if (input.size() < RESPONSE_HEADER_SIZE)
 	{
@@ -25,4 +25,9 @@ IResponse::IResponse(const Buffer& input)
 
 	m_payload = Buffer(m_payloadSize, 0);
 	std::copy(p, p + m_payload.size(), m_payload.data());
+}
+
+Code Response::getCode() const
+{
+	return m_code;
 }

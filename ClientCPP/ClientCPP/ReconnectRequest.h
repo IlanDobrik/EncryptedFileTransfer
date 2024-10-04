@@ -7,7 +7,7 @@
 
 constexpr Code RECONNECT_REQUEST_CODE = 826;
 
-class ReconnectRequest : public IRequest {
+class ReconnectRequest : public Request {
 public:
 	ReconnectRequest(const ClientID& clientID, const PublicKey& publicKey);
 	virtual ~ReconnectRequest() = default;

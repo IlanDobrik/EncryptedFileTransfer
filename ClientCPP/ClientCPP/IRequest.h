@@ -4,14 +4,14 @@
 #include "Hardcoded.h"
 
 
-class IRequest {
+class Request {
 public:
-	IRequest(const ClientID& clientId, const Code& code);
+	Request(const ClientID& clientId, const Code& code);
 	Buffer serialize();
 	
 protected:
-	virtual ~IRequest() = default;
-	virtual Buffer _serialize() = 0;
+	virtual ~Request() = default;
+	virtual Buffer _serialize();
 
 private:
 	Buffer serializeHeader(const PayloadSize payloadSize);
