@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Common.hpp"
 #include "boost/asio.hpp"
+
+#include "Common.hpp"
+#include "Hardcoded.h"
 
 
 using boost::asio::ip::tcp;
@@ -11,7 +13,7 @@ public:
 	Connection(const std::string& address, const std::string& port);
 	virtual ~Connection() = default;
 
-	Buffer read();
+	Buffer read(const uint32_t size = DEFAULT_READ_SIZE);
 	void write(const Buffer& data);
 
 private:

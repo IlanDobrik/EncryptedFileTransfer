@@ -20,17 +20,24 @@ class ClientThread(threading.Thread):
         public_rsa_key = self.csocket.recv(32).decode()
         symetric_key = SymetricKey(public_rsa_key)
         self.csocket.send(symetric_key.get_encrypted_session_key())
+        
+    def send_aes(self, request: Requests.PublicKeyRequest):
+        symetric_key = SymetricKey(request.publicKey)
+        response = Responses.EncryptedAESResponse(request.clientID, symetric_key.get_encrypted_session_key())
+        self.csocket.send(response.pack())
 
     def register(self):
-        self.csocket.sendall(Responses.SuccessfulRegisterResponse(Utils.generateUUID().encode()))
+        response = Responses.SuccessfulRegisterResponse(Utils.generateUUID().encode())
+        self.csocket.sendall(response.pack())
 
     def run(self):
         try:
-            request = Requests.Request(self.csocket.recv(1024))
-            
-            if request == Requests.RegisterRequest.CODE:
-                self.register()
-            
-            
+            while True:
+                request = Requests.Request(self.csocket.recv(1024))
+                if request.code == Requests.RegisterRequest.CODE:
+                    self.register()
+                if request.code == Requests.PublicKeyRequest.CODE:
+                    self.send_aes(request)
+                    
         except Exception as e:
             logging.error("Caught exception {e}")

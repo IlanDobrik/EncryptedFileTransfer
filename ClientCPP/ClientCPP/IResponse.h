@@ -9,6 +9,7 @@ public:
 	Response(const Buffer& input); 
 
 	Code getCode() const;
+	Code getPayloadSize() const;
 
 protected:
 	Version m_version;

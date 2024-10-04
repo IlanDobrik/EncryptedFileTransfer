@@ -5,6 +5,9 @@
 
 constexpr uint8_t CLIENT_VERSION = 1;
 constexpr uint32_t MAX_RETRY_COUNT = 3;
+constexpr uint32_t DEFAULT_READ_SIZE = 1024;
+
+
 
 // IRequest
 using Version = uint8_t;

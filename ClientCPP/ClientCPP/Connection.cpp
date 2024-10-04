@@ -1,13 +1,30 @@
 #include "Connection.h"
 
+#include "IResponse.h"
+
 Connection::Connection(const std::string& address, const std::string& port) :
 	m_ioContext(), m_socket(_initialize_socket(m_ioContext, address, port))
 { }
 
-Buffer Connection::read()
+Buffer Connection::read(const uint32_t size)
 {
-	// boost::asio::read()
-	return Buffer();
+	boost::system::error_code error;
+	boost::asio::streambuf receive_buffer;
+	boost::asio::read(m_socket, receive_buffer, boost::asio::transfer_exactly(RESPONSE_HEADER_SIZE), error);
+
+	Buffer header(receive_buffer.size(), 0);
+	receive_buffer.sgetn(reinterpret_cast<char*>(header.data()), header.size());
+
+	Response rs(header);
+	boost::asio::read(m_socket, receive_buffer, boost::asio::transfer_exactly(rs.getPayloadSize()), error);
+	Buffer payload(receive_buffer.size(), 0);
+	receive_buffer.sgetn(reinterpret_cast<char*>(payload.data()), payload.size());
+
+	Buffer out(header.size() + payload.size(), 0);
+	std::copy(header.begin(), header.end(), out.begin());
+	std::copy(header.begin(), header.end(), out.begin() + header.size());
+
+	return out;
 }
 
 void Connection::write(const Buffer& data)
