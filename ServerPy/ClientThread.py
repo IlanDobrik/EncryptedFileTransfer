@@ -32,7 +32,8 @@ class ClientThread(threading.Thread):
     def run(self):
         try:
             while True:
-                data = self.csocket.recv(1024)
+                # TODO read header, then payload
+                data = self.csocket.recv(1024) # TODO on connection close, this returns b''
                 request = Requests.Request(data)
                 if request.code == Requests.RegisterRequest.CODE:
                     self.register()

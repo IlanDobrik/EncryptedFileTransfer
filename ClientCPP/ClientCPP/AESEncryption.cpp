@@ -51,3 +51,8 @@ Buffer AES::GenerateKey()
 
 	return out;
 }
+
+Buffer AES::getKey() const
+{
+	return m_key;
+}

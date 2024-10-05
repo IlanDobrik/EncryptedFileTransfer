@@ -33,25 +33,23 @@ Client::~Client()
 
 void Client::uploadFile(const std::string & filePath)
 {
-	if (m_me.privateKey.empty())
-	{
-		attemptXTimes(MAX_RETRY_COUNT, [this]() { registerClient(); }); // TODO prettier?
+	registerClient();
+	/*if (m_me.aesKey.empty()) {
+		registerClient();
 	}
 	else {
-		m_aes = std::make_unique<AES>(m_me.privateKey);
-	}
+		m_aes = std::make_unique<AES>(m_me.aesKey);
+	}*/
 }
 
 void Client::attemptXTimes(const uint32_t maxRetries, std::function<void(void)> f)
 {
 	uint32_t currentTry = 1;
 	while (true) {
-		try 
-		{
+		try  {
 			return f();
 		}
-		catch (std::exception e)
-		{
+		catch (std::exception e) {
 			if (currentTry < maxRetries) {
 				std::cout << "Attempt " << currentTry << ": " << e.what();
 				currentTry++;
@@ -95,6 +93,7 @@ void Client::exchangeKeys()
 		m_aes = std::make_unique<AES>(
 			m_rsa.decrypt(
 				AesResponse(data).getAesKey()));
+		m_me.aesKey = m_aes->getKey();
 		break;
 	default:
 		throw std::exception("Bad response for key exchange request");

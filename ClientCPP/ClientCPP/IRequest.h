@@ -20,6 +20,6 @@ private:
 	Version m_version;
 
 protected:
-	const ClientID m_clientID;
+	ClientID m_clientID;
 	Code m_code;
 };

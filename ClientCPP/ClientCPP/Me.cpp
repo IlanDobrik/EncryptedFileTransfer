@@ -1,4 +1,5 @@
 #include "Me.hpp"
+#include "Base64.hpp"
 
 
 Me Me::get(const std::string& mePath) {
@@ -19,7 +20,7 @@ Me Me::get(const std::string& mePath) {
     return Me{
         clientname,
         clientId,
-        getLineBin(configFile),
+        Base64::decode(getLineBin(configFile)),
     };
 }
 
@@ -30,9 +31,12 @@ void Me::save(const Me& me, const std::string& mePath)
         throw std::exception("Failed to open me file");
     }
 
-    configFile.write(reinterpret_cast<const char*>(me.name.data()), me.name.size());
-    configFile.write(reinterpret_cast<const char*>(me.UUID.data()), me.UUID.size());
-    configFile.write(reinterpret_cast<const char*>(me.privateKey.data()), me.privateKey.size());
+    configFile << std::string(me.name.begin(), me.name.end());
+    configFile << "\n";
+    configFile << std::string(me.UUID.begin(), me.UUID.end());
+    configFile << "\n";
+    auto aesBase64 = Base64::encode(me.aesKey);
+    configFile << std::string(aesBase64.begin(), aesBase64.end());
 
     configFile.close();
 }

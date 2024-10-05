@@ -17,6 +17,8 @@ public:
 
     static Buffer GenerateKey();
 
+    Buffer getKey() const;
+
 private:
     const Buffer m_key;
     const Buffer m_iv;
