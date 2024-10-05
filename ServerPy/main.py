@@ -6,8 +6,7 @@ import struct
 
 import Config
 from ClientThread import ClientThread
-import Requests
-import Responses
+import DB
 
 
 def listen4clients(listenPort):
@@ -17,11 +16,13 @@ def listen4clients(listenPort):
     server.bind(('', listenPort))
     logging.info(f"Sarted listening on port {listenPort}")
 
+    db = DB.DB()
+
     # creating client sockets    
     while True:
         server.listen(1)
         clientsock, clientAddress = server.accept()
-        newthread = ClientThread(clientAddress, clientsock)
+        newthread = ClientThread(db, clientAddress, clientsock)
         newthread.start()
 
 def main():

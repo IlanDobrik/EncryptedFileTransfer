@@ -11,33 +11,33 @@ import Responses
 
 
 class ClientThread(threading.Thread):
-    def __init__(self, clientAddress: socket.socket, clientsocket: socket.AddressInfo):
+    def __init__(self, db, clientAddress: socket.socket, clientsocket: socket.AddressInfo):
         threading.Thread.__init__(self, daemon=True)
+        self.db = db
         self.csocket: socket.socket = clientsocket
         self.caddress = clientAddress
-
-    def key_exchange(self):
-        public_rsa_key = self.csocket.recv(32).decode()
-        symetric_key = SymetricKey(public_rsa_key)
-        self.csocket.send(symetric_key.get_encrypted_session_key())
-        
+    
     def send_aes(self, request: Requests.PublicKeyRequest):
-        symetric_key = SymetricKey(request.publicKey)
-        response = Responses.EncryptedAESResponse(request.clientID, symetric_key.get_encrypted_session_key())
-        self.csocket.send(response.pack())
+        symetric_key = SymetricKey(request.publicKey).get_encrypted_session_key()
+        response = Responses.EncryptedAESResponse(request.clientID, symetric_key)
+        self.csocket.sendall(response.pack())
+        self.db.insert(request.clientID, symetric_key)
 
     def register(self):
-        response = Responses.SuccessfulRegisterResponse(Utils.generateUUID().encode())
+        client_id = Utils.generateUUID().encode()
+        response = Responses.SuccessfulRegisterResponse(client_id)
         self.csocket.sendall(response.pack())
+        self.db.insert(client_id, "")
 
     def run(self):
         try:
             while True:
-                request = Requests.Request(self.csocket.recv(1024))
+                data = self.csocket.recv(1024)
+                request = Requests.Request(data)
                 if request.code == Requests.RegisterRequest.CODE:
                     self.register()
                 if request.code == Requests.PublicKeyRequest.CODE:
-                    self.send_aes(request)
+                    self.send_aes(Requests.PublicKeyRequest(data))
                     
         except Exception as e:
-            logging.error("Caught exception {e}")
+            logging.error(f"Caught exception {e}")

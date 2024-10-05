@@ -56,6 +56,12 @@
     <ClCompile Include="AesResponse.cpp">
       <Filter>Responses\Aes</Filter>
     </ClCompile>
+    <ClCompile Include="FailedRegisterResponse.cpp">
+      <Filter>Responses\FailedRegister</Filter>
+    </ClCompile>
+    <ClCompile Include="SendFileRequest.cpp">
+      <Filter>Requests\SendFile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">
@@ -106,6 +112,12 @@
     <Filter Include="Responses\Aes">
       <UniqueIdentifier>{7a844e31-dea9-49a6-82e8-83b42ef13d81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Responses\OkCRC">
+      <UniqueIdentifier>{d80923f5-4a41-4cbc-a209-5eecddac271d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Requests\SendFile">
+      <UniqueIdentifier>{5331636b-7505-4705-b751-39204f76309a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Me.hpp">
@@ -149,6 +161,9 @@
     </ClInclude>
     <ClInclude Include="AesResponse.h">
       <Filter>Responses\Aes</Filter>
+    </ClInclude>
+    <ClInclude Include="SendFileRequest.h">
+      <Filter>Requests\SendFile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

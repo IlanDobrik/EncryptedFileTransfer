@@ -10,19 +10,19 @@ Buffer Connection::read(const uint32_t size)
 {
 	boost::system::error_code error;
 	boost::asio::streambuf receive_buffer;
-	boost::asio::read(m_socket, receive_buffer, boost::asio::transfer_exactly(RESPONSE_HEADER_SIZE), error);
+	auto bytesRead = boost::asio::read(m_socket, receive_buffer, boost::asio::transfer_exactly(RESPONSE_HEADER_SIZE), error);
 
 	Buffer header(receive_buffer.size(), 0);
 	receive_buffer.sgetn(reinterpret_cast<char*>(header.data()), header.size());
 
 	Response rs(header);
-	boost::asio::read(m_socket, receive_buffer, boost::asio::transfer_exactly(rs.getPayloadSize()), error);
+	bytesRead = boost::asio::read(m_socket, receive_buffer, boost::asio::transfer_exactly(rs.getPayloadSize()), error);
 	Buffer payload(receive_buffer.size(), 0);
 	receive_buffer.sgetn(reinterpret_cast<char*>(payload.data()), payload.size());
 
 	Buffer out(header.size() + payload.size(), 0);
 	std::copy(header.begin(), header.end(), out.begin());
-	std::copy(header.begin(), header.end(), out.begin() + header.size());
+	std::copy(payload.begin(), payload.end(), out.begin() + header.size());
 
 	return out;
 }

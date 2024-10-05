@@ -17,16 +17,10 @@
 
 
 
-#define TRANSFER_INFO_PATH "./transfer.info"
-#define ME_PATH "./me.info"
-#define RSA_PRIVATE_KEY_PATH "./priv.key"
-
-
-
 
 int main(void) {
     auto transferInfo = getTransferInfo(TRANSFER_INFO_PATH);
-    auto me = getMe(ME_PATH);
+    auto me = Me::get(ME_PATH);
     auto rsa = RSA(RSA_PRIVATE_KEY_PATH);
     auto aes = AES(Buffer());
     auto connection = std::make_unique<Connection>("127.0.0.1", "1256");

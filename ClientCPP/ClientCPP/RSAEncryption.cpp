@@ -10,7 +10,7 @@ CryptoPP::AutoSeededRandomPool rng;
 void generate_keys() {
     CryptoPP::RSA::PrivateKey privKey;
     CryptoPP::RSA::PublicKey pubKey;
-    privKey.GenerateRandomWithKeySize(rng, 8192);
+    privKey.Initialize(rng, 1024);
     pubKey = CryptoPP::RSA::PublicKey(privKey);
     std::cout << "Generation ended." << std::endl;
 
@@ -38,22 +38,16 @@ RSA::RSA(const std::string& privateKeyPath) {
 }
 
 Buffer RSA::encrypt(const Buffer& to_encrypt) {
-    CryptoPP::RSAES_OAEP_SHA_Encryptor encryptor(m_pubKey);
     Buffer ciphered;
+    CryptoPP::RSAES_OAEP_SHA_Encryptor encryptor(m_pubKey);
     CryptoPP::VectorSource(to_encrypt, true, new CryptoPP::PK_EncryptorFilter(rng, encryptor, new CryptoPP::VectorSink(ciphered)));
-
-    Buffer encoded_ciphered;
-    CryptoPP::VectorSource(ciphered, true, new CryptoPP::Base64Encoder(new CryptoPP::VectorSink(encoded_ciphered)));
-    return encoded_ciphered;
+    return ciphered;
 }
 
 Buffer RSA::decrypt(const Buffer& to_decrypt) {
-    Buffer decoded_ciphered;
-    CryptoPP::VectorSource(to_decrypt, true, new CryptoPP::Base64Decoder(new CryptoPP::VectorSink(decoded_ciphered)));
-
     Buffer recovered;
     CryptoPP::RSAES_OAEP_SHA_Decryptor decryptor(m_privKey);
-    CryptoPP::VectorSource(decoded_ciphered, true, new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::VectorSink(recovered)));
+    CryptoPP::VectorSource(to_decrypt, true, new CryptoPP::PK_DecryptorFilter(rng, decryptor, new CryptoPP::VectorSink(recovered)));
 
     return recovered;
 }
@@ -61,7 +55,8 @@ Buffer RSA::decrypt(const Buffer& to_decrypt) {
 PublicKey RSA::getPublicKey()
 {
     PublicKey rsaBuffer;
-    // TODO m_pubKey to buffer 
 
+    CryptoPP::ArraySink as(rsaBuffer.data(), rsaBuffer.size());
+    m_pubKey.Save(as);
     return rsaBuffer;
 }

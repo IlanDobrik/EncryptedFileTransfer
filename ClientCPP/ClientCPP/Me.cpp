@@ -1,7 +1,7 @@
 #include "Me.hpp"
 
 
-Me getMe(const std::string& mePath) {
+Me Me::get(const std::string& mePath) {
     std::ifstream configFile(mePath);
 
     if (!configFile.is_open()) {
@@ -23,7 +23,7 @@ Me getMe(const std::string& mePath) {
     };
 }
 
-void saveMe(const std::string& mePath, const Me& me)
+void Me::save(const Me& me, const std::string& mePath)
 {
     std::ofstream configFile(mePath);
     if (!configFile.is_open()) {
