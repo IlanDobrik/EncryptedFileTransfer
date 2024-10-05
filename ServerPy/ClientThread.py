@@ -8,12 +8,13 @@ from cksum import memcrc
 
 import Requests
 import Responses
+from DB import DB
 
 
 class ClientThread(threading.Thread):
     def __init__(self, db, clientAddress: socket.socket, clientsocket: socket.AddressInfo):
         threading.Thread.__init__(self, daemon=True)
-        self.db = db
+        self.db : DB = db
         self.csocket: socket.socket = clientsocket
         self.caddress = clientAddress
     
@@ -21,13 +22,16 @@ class ClientThread(threading.Thread):
         symetric_key = SymetricKey(request.publicKey).get_encrypted_session_key()
         response = Responses.EncryptedAESResponse(request.clientID, symetric_key)
         self.csocket.sendall(response.pack())
-        self.db.insert(request.clientID, symetric_key)
+        self.db.insert(request.clientID, request.name, symetric_key)
 
-    def register(self):
-        client_id = Utils.generateUUID().encode()
-        response = Responses.SuccessfulRegisterResponse(client_id)
+    def register(self, request : Requests.RegisterRequest):
+        if self.db.exists(request.name):
+            response = Responses.FailedRegisterResponse()
+        else:
+            client_id = Utils.generateUUID().encode()
+            response = Responses.SuccessfulRegisterResponse(client_id)
+            self.db.insert(client_id, request.name, "")
         self.csocket.sendall(response.pack())
-        self.db.insert(client_id, "")
 
     def run(self):
         try:
@@ -35,10 +39,12 @@ class ClientThread(threading.Thread):
                 # TODO read header, then payload
                 data = self.csocket.recv(1024) # TODO on connection close, this returns b''
                 request = Requests.Request(data)
+                # TODO command factory
                 if request.code == Requests.RegisterRequest.CODE:
-                    self.register()
-                if request.code == Requests.PublicKeyRequest.CODE:
+                    self.register(Requests.RegisterRequest(data))
+                elif request.code == Requests.PublicKeyRequest.CODE:
                     self.send_aes(Requests.PublicKeyRequest(data))
-                    
+                # TODO add reconnect
+                # TODO add file recive
         except Exception as e:
             logging.error(f"Caught exception {e}")

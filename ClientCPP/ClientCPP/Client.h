@@ -21,6 +21,7 @@ public:
 private:
 	static void attemptXTimes(const uint32_t maxRetries, std::function<void()>);
 	void registerClient();
+	void reconnect();
 	void exchangeKeys();
 	void _uploadFile(const std::string& filePath);
 	void CRCCheck();

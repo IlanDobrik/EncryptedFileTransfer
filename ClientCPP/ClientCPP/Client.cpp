@@ -12,6 +12,8 @@
 #include "AesRequest.h"
 #include "AesResponse.h"
 
+#include "ReconnectRequest.h"
+
 #include "SendFileRequest.h"
 
 
@@ -33,13 +35,16 @@ Client::~Client()
 
 void Client::uploadFile(const std::string & filePath)
 {
-	registerClient();
-	/*if (m_me.aesKey.empty()) {
+	if (m_me.aesKey.empty()) {
 		registerClient();
 	}
 	else {
 		m_aes = std::make_unique<AES>(m_me.aesKey);
-	}*/
+		// TODO reconnect
+	}
+
+	_uploadFile(filePath);
+	CRCCheck();
 }
 
 void Client::attemptXTimes(const uint32_t maxRetries, std::function<void(void)> f)
@@ -71,7 +76,7 @@ void Client::registerClient()
 	switch (response.getCode()) {
 	case SUCCESSFUL_REGISTER_RESPONSE_CODE:
 		m_me.UUID = SuccessfulRegisterResponse(data).getClientID();
-		attemptXTimes(MAX_RETRY_COUNT, [this]() { exchangeKeys(); }); // TODO prettier?
+		exchangeKeys();
 		break;
 	case FAILED_REGISTER_RESPONSE_CODE:
 		throw std::exception("Failed to register");
@@ -79,12 +84,30 @@ void Client::registerClient()
 	default:
 		throw std::exception("Bad response for registeration request");
 	}
+}
 
+void Client::reconnect()
+{
+	m_connection->write(ReconnectRequest(m_me.UUID, m_me.name).serialize());
+	auto data = m_connection->read();
+	Response response(data);
+
+	switch (response.getCode()) {
+	case 1605:
+		// Successful reconnect
+		break;
+	case 1606:
+		// Failed reconnect - register instead
+		registerClient();
+		break;
+	default:
+		throw std::exception("Bad response for registeration request");
+	}
 }
 
 void Client::exchangeKeys()
 {
-	m_connection->write(AesRequest(m_me.UUID, m_transferInfo.clientName, m_rsa.getPublicKey()).serialize());
+	m_connection->write(AesRequest(m_me.UUID, m_me.name, m_rsa.getPublicKey()).serialize());
 	auto data = m_connection->read();
 	Response response(data);
 
@@ -95,6 +118,7 @@ void Client::exchangeKeys()
 				AesResponse(data).getAesKey()));
 		m_me.aesKey = m_aes->getKey();
 		break;
+
 	default:
 		throw std::exception("Bad response for key exchange request");
 	}
@@ -115,23 +139,28 @@ void Client::_uploadFile(const std::string& filePath)
 
 	switch (response.getCode()) {
 	default:
-		throw std::exception("Bad response for key exchange request");
+		throw std::exception("Bad response for file upload");
 	}
 }
 
+// TODO
 void Client::CRCCheck()
 {
-	m_connection->write(Buffer());
 	auto data = m_connection->read();
 	Response response(data);
 
 	switch (response.getCode()) {
-	case AES_RESPONSE_CODE:
-		m_aes = std::make_unique<AES>(
-			m_rsa.decrypt(
-				AesResponse(data).getAesKey()));
+	case 1603:
+		// OK
+		break;
+	case 1604:
+		// 
 		break;
 	default:
 		throw std::exception("Bad response for key exchange request");
 	}
+
+	// TODO response with 900 if CRC matches
+	// 901 if not
+	// 902 after 3rd attempt + exit
 }
