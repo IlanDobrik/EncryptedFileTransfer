@@ -6,7 +6,7 @@
 
 constexpr Code AES_RESPONSE_CODE = 1602;
 
-class AesResponse : public SuccessfulRegisterResponse
+class AesResponse : public ResponseWithClientID
 {
 public:
 	AesResponse(const Buffer& input);

@@ -5,9 +5,9 @@ from Crypto.Hash import HMAC, SHA256
 
 
 class SymetricKey:
-    def __init__(self, public_rsa_key) -> None:
+    def __init__(self, public_rsa_key, aes_key : bytes =b"") -> None:
         self.public_rsa_key = public_rsa_key
-        self.session_key = get_random_bytes(32)
+        self.session_key = aes_key if aes_key != b"" else get_random_bytes(32)
         self.cipher_aes = AES.new(self.session_key, AES.MODE_CBC)
 
     def encrypt(self, data):

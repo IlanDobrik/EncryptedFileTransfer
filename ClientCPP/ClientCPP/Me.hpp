@@ -9,7 +9,9 @@
 struct Me {
     ClientName name;
     ClientID UUID; 
-    Buffer aesKey;
+    Buffer WTF_IS_THIS;
+
+    void reset();
 
     static Me get(const std::string& mePath);
     static void save(const Me& me, const std::string& mePath);

@@ -32,7 +32,22 @@ Code Response::getCode() const
 	return m_code;
 }
 
-Code Response::getPayloadSize() const
+PayloadSize Response::getPayloadSize() const
 {
 	return m_payloadSize;
+}
+
+ResponseWithClientID::ResponseWithClientID(const Buffer& input) : 
+	Response(input)
+{
+	auto p = m_payload.begin();
+	std::copy(m_payload.begin(), m_payload.end(), m_clientID.data());
+	p += sizeof(m_clientID);
+
+	m_payload = Buffer(p, m_payload.end()); //Move pointer so others can inherite and continue parse
+}
+
+ClientID ResponseWithClientID::getClientID() const
+{
+	return m_clientID;
 }

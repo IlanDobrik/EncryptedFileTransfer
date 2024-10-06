@@ -33,6 +33,17 @@ class ClientThread(threading.Thread):
             self.db.insert(client_id, request.name, "")
         self.csocket.sendall(response.pack())
 
+    def reconnect(self, request: Requests.ReConnectRequest):
+        client_id = request.clientID
+        if not self.db.exists(client_id):
+            response = Responses.RejectedReconnectResponse(client_id)
+        else:
+            public_key, aes_key = self.db.get(client_id)
+            symetric_key = SymetricKey(public_key, aes_key).get_encrypted_session_key()
+            response = Responses.SuccessfulReconnectResponse(client_id, symetric_key)
+        
+        self.csocket.sendall(response.pack())
+
     def run(self):
         try:
             while True:
@@ -44,6 +55,8 @@ class ClientThread(threading.Thread):
                     self.register(Requests.RegisterRequest(data))
                 elif request.code == Requests.PublicKeyRequest.CODE:
                     self.send_aes(Requests.PublicKeyRequest(data))
+                elif request.code == Requests.ReConnectRequest.CODE:
+                    self.reconnect(Requests.ReConnectRequest(data))
                 # TODO add reconnect
                 # TODO add file recive
         except Exception as e:

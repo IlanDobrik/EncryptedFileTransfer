@@ -29,6 +29,10 @@ void generate_keys() {
 RSA::RSA(const std::string& privateKeyPath) {
     CryptoPP::RSA::PrivateKey privKey;
     std::ifstream privFile(privateKeyPath, std::ios::binary);
+    if (!privFile.is_open()) {
+        throw std::exception("Failed to open privateKeyPath");
+    }
+
     CryptoPP::FileSource privSource(privFile, true);
     privKey.BERDecode(privSource);
     privFile.close();

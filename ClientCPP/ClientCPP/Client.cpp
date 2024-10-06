@@ -13,6 +13,8 @@
 #include "AesResponse.h"
 
 #include "ReconnectRequest.h"
+#include "SuccessfulReconnectResponse.h"
+#include "FailedReconnectResponse.h"
 
 #include "SendFileRequest.h"
 
@@ -35,12 +37,12 @@ Client::~Client()
 
 void Client::uploadFile(const std::string & filePath)
 {
-	if (m_me.aesKey.empty()) {
+	if (m_me.UUID.empty()) {
 		registerClient();
 	}
 	else {
-		m_aes = std::make_unique<AES>(m_me.aesKey);
-		// TODO reconnect
+		// Already recived UUID from server
+		reconnect();
 	}
 
 	_uploadFile(filePath);
@@ -69,7 +71,7 @@ void Client::attemptXTimes(const uint32_t maxRetries, std::function<void(void)> 
 
 void Client::registerClient()
 {
-	m_connection->write(RegisterRequest(m_transferInfo.clientName).serialize());
+	m_connection->write(RegisterRequest(ClientID{0}, m_transferInfo.clientName).serialize());
 	auto data = m_connection->read();
 	Response response(data);
 
@@ -93,11 +95,13 @@ void Client::reconnect()
 	Response response(data);
 
 	switch (response.getCode()) {
-	case 1605:
-		// Successful reconnect
+	case SUCCESSFUL_RECONNECT_RESPONSE_CODE:
+		m_aes = std::make_unique<AES>(
+			m_rsa.decrypt(
+				SuccessfulReconnectResponse(data).getAesKey()));
 		break;
-	case 1606:
-		// Failed reconnect - register instead
+	case FAILED_RECONNECT_RESPONSE_CODE:
+		m_me.reset();
 		registerClient();
 		break;
 	default:
@@ -116,7 +120,7 @@ void Client::exchangeKeys()
 		m_aes = std::make_unique<AES>(
 			m_rsa.decrypt(
 				AesResponse(data).getAesKey()));
-		m_me.aesKey = m_aes->getKey();
+		m_me.WTF_IS_THIS = m_aes->getKey();
 		break;
 
 	default:

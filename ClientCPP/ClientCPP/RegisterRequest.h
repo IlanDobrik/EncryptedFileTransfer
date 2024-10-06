@@ -7,13 +7,8 @@
 
 constexpr Code REGISTER_REQUEST_CODE = 825;
 
-class RegisterRequest : public Request {
+class RegisterRequest : public RequestWithName {
 public:
-	RegisterRequest(const ClientName& clientName);
+	RegisterRequest(const ClientID& clientID, const ClientName& clientName);
 	virtual ~RegisterRequest() = default;
-
-	virtual Buffer _serialize();
-
-private:
-	ClientName m_name;
 };

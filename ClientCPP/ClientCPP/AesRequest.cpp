@@ -3,14 +3,12 @@
 
 
 AesRequest::AesRequest(const ClientID& clientID, const ClientName& clientName, const PublicKey& publicKey) :
-	RegisterRequest(clientName), m_publicKey(publicKey) // TODO client ID?
-{ 
-	m_code = AES_REQUEST_CODE; // TODO more elegent?
-}
+	RequestWithName(clientID, clientName, AES_REQUEST_CODE), m_publicKey(publicKey)
+{ }
 
 Buffer AesRequest::_serialize()
 {
-	Buffer rr = RegisterRequest::_serialize();
+	Buffer rr = RequestWithName::_serialize();
 	Buffer t = Buffer(m_publicKey.cbegin(), m_publicKey.cend());
 	
 	Buffer out(rr.cbegin(), rr.cend());

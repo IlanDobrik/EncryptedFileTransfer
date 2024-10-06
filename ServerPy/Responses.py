@@ -46,10 +46,10 @@ class FailedRegisterResponse(Response):
 class AckResponse(WithClientID):
     CODE = 1604
 
-class RejectedReconnectResponse(EncryptedAESResponse):
+class SuccessfulReconnectResponse(EncryptedAESResponse):
     CODE = 1605
     
-class RejectedReconnectResponse(Response):
+class RejectedReconnectResponse(WithClientID):
     CODE = 1606
     
 class GeneralFailureResponse(Response):

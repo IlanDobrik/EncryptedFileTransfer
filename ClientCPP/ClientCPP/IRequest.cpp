@@ -41,3 +41,13 @@ Buffer Request::serializeHeader(const PayloadSize payloadSize)
 
 	return header;
 }
+
+RequestWithName::RequestWithName(const ClientID& clientId, const ClientName& clientName, const Code& code) : 
+	Request(clientId, code), m_clientName(clientName)
+{
+}
+
+Buffer RequestWithName::_serialize()
+{
+	return Buffer(m_clientName.cbegin(), m_clientName.cend());
+}
