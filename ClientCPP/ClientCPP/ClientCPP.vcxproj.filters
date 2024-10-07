@@ -68,6 +68,9 @@
     <ClCompile Include="FailedReconnectResponse.cpp">
       <Filter>Responses\FailedReconnect</Filter>
     </ClCompile>
+    <ClCompile Include="CRCResponse.cpp">
+      <Filter>Responses\CRC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">
@@ -118,9 +121,6 @@
     <Filter Include="Responses\Aes">
       <UniqueIdentifier>{7a844e31-dea9-49a6-82e8-83b42ef13d81}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Responses\OkCRC">
-      <UniqueIdentifier>{d80923f5-4a41-4cbc-a209-5eecddac271d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Requests\SendFile">
       <UniqueIdentifier>{5331636b-7505-4705-b751-39204f76309a}</UniqueIdentifier>
     </Filter>
@@ -129,6 +129,9 @@
     </Filter>
     <Filter Include="Responses\FailedReconnect">
       <UniqueIdentifier>{bb75ab62-40f7-4ff0-bd01-afeb420f07ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Responses\CRC">
+      <UniqueIdentifier>{d80923f5-4a41-4cbc-a209-5eecddac271d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="FailedReconnectResponse.h">
       <Filter>Responses\FailedReconnect</Filter>
+    </ClInclude>
+    <ClInclude Include="CRCResponse.h">
+      <Filter>Responses\CRC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

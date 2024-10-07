@@ -22,7 +22,7 @@ class ClientThread(threading.Thread):
         symetric_key = SymetricKey(request.publicKey).get_encrypted_session_key()
         response = Responses.EncryptedAESResponse(request.clientID, symetric_key)
         self.csocket.sendall(response.pack())
-        self.db.insert(request.clientID, request.name, symetric_key)
+        self.db.insert(request.clientID, request.name, request.publicKey)
 
     def register(self, request : Requests.RegisterRequest):
         if self.db.exists(request.name):
@@ -30,19 +30,23 @@ class ClientThread(threading.Thread):
         else:
             client_id = Utils.generateUUID().encode()
             response = Responses.SuccessfulRegisterResponse(client_id)
-            self.db.insert(client_id, request.name, "")
+            self.db.insert(client_id, request.name, b"")
         self.csocket.sendall(response.pack())
 
     def reconnect(self, request: Requests.ReConnectRequest):
+        # TODO no clientID - search by name
         client_id = request.clientID
         if not self.db.exists(client_id):
             response = Responses.RejectedReconnectResponse(client_id)
+            # TODO register the client - cause we need to generate clientId, which means we are sigining him
         else:
-            public_key, aes_key = self.db.get(client_id)
-            symetric_key = SymetricKey(public_key, aes_key).get_encrypted_session_key()
+            public_key = self.db.get(client_id)
+            symetric_key = SymetricKey(public_key).get_encrypted_session_key()
             response = Responses.SuccessfulReconnectResponse(client_id, symetric_key)
-        
         self.csocket.sendall(response.pack())
+
+    def generalFailure(self):
+        self.csocket.sendall(Responses.GeneralFailureResponse().pack())
 
     def run(self):
         try:
@@ -57,7 +61,7 @@ class ClientThread(threading.Thread):
                     self.send_aes(Requests.PublicKeyRequest(data))
                 elif request.code == Requests.ReConnectRequest.CODE:
                     self.reconnect(Requests.ReConnectRequest(data))
-                # TODO add reconnect
                 # TODO add file recive
         except Exception as e:
+            self.generalFailure()
             logging.error(f"Caught exception {e}")

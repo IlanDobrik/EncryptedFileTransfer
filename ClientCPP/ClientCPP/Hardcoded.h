@@ -32,5 +32,8 @@ using CurrentPacketNumber = uint16_t;
 using TotalPacketNumber = uint16_t;
 using FileName = std::array<uint8_t, 255>;
 
+// CRC
+using CheckSum = uint32_t;
+
 constexpr uint8_t REQUEST_HEADER_SIZE = sizeof(ClientID) + sizeof(Version) + sizeof(Code) + sizeof(PayloadSize);
 constexpr uint8_t RESPONSE_HEADER_SIZE = sizeof(Version) + sizeof(Code) + sizeof(PayloadSize);

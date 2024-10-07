@@ -44,8 +44,7 @@ Buffer Request::serializeHeader(const PayloadSize payloadSize)
 
 RequestWithName::RequestWithName(const ClientID& clientId, const ClientName& clientName, const Code& code) : 
 	Request(clientId, code), m_clientName(clientName)
-{
-}
+{ }
 
 Buffer RequestWithName::_serialize()
 {

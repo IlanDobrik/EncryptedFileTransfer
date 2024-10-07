@@ -26,7 +26,7 @@ int main(void) {
     auto connection = std::make_unique<Connection>("127.0.0.1", "1256");
 
     auto client = Client(std::move(connection), rsa, aes, me, transferInfo);
-    client.uploadFile("C:/Temp/a.txt");
+    client.run("C:/Temp/a.txt");
 
 
    //{

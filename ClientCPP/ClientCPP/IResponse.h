@@ -3,6 +3,15 @@
 #include "Common.hpp"
 #include "Hardcoded.h"
 
+#include <algorithm>
+
+template<typename T, typename S>
+S write(S begin, T data) {
+	std::copy_n(begin, sizeof(data), reinterpret_cast<uint8_t*>(&data));
+	return begin + sizeof(data);
+}
+
+
 class Response
 {
 public:

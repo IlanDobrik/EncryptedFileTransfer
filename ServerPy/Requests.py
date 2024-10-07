@@ -2,6 +2,8 @@ import struct
 import Config
 
 
+# TOOD check client version - send 1607 if not
+
 def unpack_and_move(format, buffer):
     result_size = struct.calcsize(format)
     result_data = buffer[:result_size]
