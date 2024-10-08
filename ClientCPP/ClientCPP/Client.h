@@ -13,7 +13,9 @@
 class Client
 {
 public:
-	Client(std::unique_ptr<Connection> connection, const RSA& rsa, const AES& aes, const Me& me, const TransferInfo& transferInfo);
+	Client(std::unique_ptr<Connection> connection, 
+		const RSA& rsa, const AES& aes, 
+		const Me& me, const TransferInfo& transferInfo);
 	virtual ~Client();
 	void run(const std::string& filePath);
 
@@ -24,6 +26,8 @@ private:
 	void reconnect();
 	void exchangeKeys();
 	void uploadFile(const std::string& filePath);
+	void uploadPacket(const FileName& filename, const Buffer& packet,
+		const CurrentPacketNumber current, const TotalPacketNumber total);
 	void CRCCheck(const CheckSum& checksum);
 
 private:

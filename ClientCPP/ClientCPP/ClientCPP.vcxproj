@@ -140,6 +140,7 @@
     <ClCompile Include="AesResponse.cpp" />
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="Base64.hpp" />
+    <ClCompile Include="cksum.h" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Connection.cpp" />

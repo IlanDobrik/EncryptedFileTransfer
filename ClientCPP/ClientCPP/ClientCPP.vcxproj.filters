@@ -71,6 +71,9 @@
     <ClCompile Include="CRCResponse.cpp">
       <Filter>Responses\CRC</Filter>
     </ClCompile>
+    <ClCompile Include="cksum.h">
+      <Filter>Encryption</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">

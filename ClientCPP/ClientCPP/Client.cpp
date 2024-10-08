@@ -18,6 +18,7 @@
 
 #include "SendFileRequest.h"
 #include "CRCResponse.h"
+#include "cksum.h"
 
 
 Client::Client(std::unique_ptr<Connection> connection, const RSA& rsa, const AES& aes, const Me& me, const TransferInfo& transferInfo) :
@@ -136,28 +137,44 @@ void Client::uploadFile(const std::string& filePath)
 {
 	constexpr uint32_t MAX_PACKET_SIZE = 1024 * 1024; // 1GB
 
-	std::ifstream file(filePath, std::ios_base::binary);
-	
 	FileName fileName;
 	std::copy(filePath.cbegin(), filePath.cend(), fileName.begin());
+
 	const uint64_t fileSize = std::filesystem::file_size(filePath);
+	
 	const TotalPacketNumber totalPackets = fileSize / MAX_PACKET_SIZE + 
 		(0 == fileSize % MAX_PACKET_SIZE ? 0: 1); // Add 1 for less than packetSize
 	CurrentPacketNumber currentPacket = 1;
 
-	for (;currentPacket < totalPackets; ++currentPacket) {
+	std::ifstream file(filePath, std::ios_base::binary);
+	Crc crc;
+	for (;currentPacket - 1 < totalPackets; ++currentPacket) {
 		Buffer packet(MAX_PACKET_SIZE, 0);
-		OriginalSize originalFileSize = file.readsome(reinterpret_cast<char*>(packet.data()), packet.size());
-		Buffer encryptedPacket = m_aes->encrypt(packet);
-		ContentSize encryptedFileSize = encryptedPacket.size();
+		
+		file.read(reinterpret_cast<char*>(packet.data()), packet.size());
+		uint32_t bytesRead = file.gcount();
+		packet.resize(bytesRead);
 
-		m_connection->write(SendFileRequest(m_me.UUID, 
-			encryptedFileSize, originalFileSize, 
-			currentPacket, totalPackets, 
-			fileName, encryptedPacket).serialize());
+		crc.add(packet);
+		uploadPacket(fileName, packet, currentPacket, totalPackets);
 	}
+	file.close();
 
-	CRCCheck(0); // TODO calculate checksum
+	CRCCheck(crc.calc());
+}
+
+void Client::uploadPacket(const FileName& filename, const Buffer& packet,
+	const CurrentPacketNumber current, const TotalPacketNumber total)
+{
+	OriginalSize originalFileSize = packet.size();
+
+	Buffer encryptedPacket = m_aes->encrypt(packet);
+	ContentSize encryptedFileSize = encryptedPacket.size();
+
+	m_connection->write(SendFileRequest(m_me.UUID,
+		encryptedFileSize, originalFileSize,
+		current, total,
+		filename, encryptedPacket).serialize());
 }
 
 // TODO
