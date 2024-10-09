@@ -105,9 +105,7 @@ void Client::reconnect()
 		break;
 	case FAILED_RECONNECT_RESPONSE_CODE:
 		m_me.reset();
-		m_me.UUID = FailedReconnectResponse(data).getClientID();
-		m_me.name = m_transferInfo.clientName;
-		exchangeKeys();
+		registerClient();
 		break;
 	default:
 		throw std::exception("Bad response for registeration request");
@@ -169,6 +167,7 @@ void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 	OriginalSize originalFileSize = packet.size();
 
 	Buffer encryptedPacket = m_aes->encrypt(packet);
+	Buffer decryptedPacket = m_aes->decrypt(encryptedPacket);
 	ContentSize encryptedFileSize = encryptedPacket.size();
 
 	m_connection->write(SendFileRequest(m_me.UUID,
@@ -184,9 +183,11 @@ void Client::CRCCheck(const CheckSum& checksum)
 	Response response(data);
 
 	switch (response.getCode()) {
-	case 1603:
+	case 1603: {
+		auto aba = CRCResponse(data).getCheckSum();
 		if (checksum == CRCResponse(data).getCheckSum())
 		{
+			std::cout << "Fuck yes\n";
 			// TODO respond 900
 			// Finish
 		}
@@ -195,6 +196,8 @@ void Client::CRCCheck(const CheckSum& checksum)
 		}
 		// TODO on 3rd attempt - respond 902 + Finish
 		break;
+		}
+		
 	case 1604:
 		// Finish
 		break;

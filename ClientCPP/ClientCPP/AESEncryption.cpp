@@ -6,7 +6,7 @@
 #include "modes.h"
 #include "filters.h"
 
-constexpr unsigned int DEFAULT_KEYLENGTH = 16;
+constexpr unsigned int DEFAULT_KEYLENGTH = 32;
 
 
 AES::AES(const Buffer& key, const Buffer& iv) :
@@ -19,7 +19,7 @@ Buffer AES::encrypt(const Buffer& input) {
 
 	Buffer cipher;
 	CryptoPP::StreamTransformationFilter stfEncryptor(cbcEncryption, new CryptoPP::VectorSink(cipher));
-	stfEncryptor.Put(cipher.data(), cipher.size());
+	stfEncryptor.Put(input.data(), input.size());
 	stfEncryptor.MessageEnd();
 
 	return cipher;
@@ -27,15 +27,15 @@ Buffer AES::encrypt(const Buffer& input) {
 
 Buffer AES::decrypt(const Buffer& input) {
 
-	CryptoPP::AES::Encryption aesEncryption(m_key.data(), DEFAULT_KEYLENGTH);
-	CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcDecryption(aesEncryption, m_iv.data());
+	CryptoPP::AES::Decryption aesDecryption(m_key.data(), DEFAULT_KEYLENGTH);
+	CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, m_iv.data());
 
-	Buffer cipher;
-	CryptoPP::StreamTransformationFilter stfDecryptor(cbcDecryption, new CryptoPP::VectorSink(cipher));
-	stfDecryptor.Put(cipher.data(), cipher.size());
+	Buffer plain;
+	CryptoPP::StreamTransformationFilter stfDecryptor(cbcDecryption, new CryptoPP::VectorSink(plain));
+	stfDecryptor.Put(input.data(), input.size());
 	stfDecryptor.MessageEnd();
 
-	return cipher;
+	return plain;
 }
 
 

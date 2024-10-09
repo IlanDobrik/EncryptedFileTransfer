@@ -1,6 +1,6 @@
 import struct
 
-import Config
+import config
 
 class Response:
     RESPONSE_FORMAT = f"<BHL"
@@ -10,12 +10,12 @@ class Response:
         pass
         
     def pack(self, payload: bytes = b""):
-        return struct.pack(self.RESPONSE_FORMAT, Config.SERVER_VERSION, self.CODE, payload.__len__()) + payload
+        return struct.pack(self.RESPONSE_FORMAT, config.SERVER_VERSION, self.CODE, payload.__len__()) + payload
 
 
 class WithClientID(Response):    
     def __init__(self, client_id) -> None:
-        payload_format = f"{Config.CLIENT_ID_SIZE}s"
+        payload_format = f"{config.CLIENT_ID_SIZE}s"
         self.payload_size = struct.calcsize(payload_format)
         self.payload = struct.pack(payload_format, client_id)
         
@@ -39,9 +39,17 @@ class EncryptedAESResponse(WithClientID):
     def pack(self):
         return super().pack(self.aes_key)
 
-# TODO
-class FailedRegisterResponse(Response):
+class CRCResponse(WithClientID):
     CODE = 1603
+    PAYLOAD_FORMAT = f"<L{config.FILE_NAME_SIZE}sL"
+    def __init__(self, client_id, content_size, file_name, checksum) -> None:
+        super().__init__(client_id)
+        self.content_size = content_size
+        self.file_name = file_name
+        self.checksum = checksum
+    
+    def pack(self):
+        return super().pack(struct.pack(self.PAYLOAD_FORMAT, self.content_size, self.file_name, self.checksum))
 
 class AckResponse(WithClientID):
     CODE = 1604

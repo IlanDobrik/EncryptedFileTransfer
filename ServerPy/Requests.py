@@ -1,5 +1,5 @@
 import struct
-import Config
+import config
 
 
 # TOOD check client version - send 1607 if not
@@ -14,7 +14,7 @@ def unpack_and_move(format, buffer):
 
 class Request:
     CODE = 0 # each request must fill
-    GENERIC_REQUEST_FORMAT = f"<{Config.CLIENT_ID_SIZE}sBHL"
+    GENERIC_REQUEST_FORMAT = f"<{config.CLIENT_ID_SIZE}sBHL"
     
     def __init__(self, data) -> None:
         leftover, self.clientID, self.version, self.code, self.payload_size = unpack_and_move(self.GENERIC_REQUEST_FORMAT, data)
@@ -42,10 +42,9 @@ class ReConnectRequest(RegisterRequest):
 
 class SendFileRequest(Request):
     CODE = 828
-    FILE_NAME_LENGTH = 255
     def __init__(self, data) -> None:
         super().__init__(data)
-        self.payload, self.content_size, self.original_size, self.current_chunk, self.total_chunks, self.file_name = unpack_and_move(f"LLHH{self.FILE_NAME_LENGTH}s", self.payload) # 16bytes
+        self.payload, self.content_size, self.original_size, self.current_chunk, self.total_chunks, self.file_name = unpack_and_move(f"LLHH{config.FILE_NAME_SIZE}s", self.payload) # 16bytes
         self.payload, self.content = unpack_and_move(f"{self.content_size}s", self.payload)
 
 class OkCRCRequest(Request):

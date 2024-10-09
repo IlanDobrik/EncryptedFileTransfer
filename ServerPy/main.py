@@ -4,7 +4,7 @@ import logging
 import socket
 import struct
 
-import Config
+from config import read_config
 from ClientThread import ClientThread
 import DB
 
@@ -26,7 +26,7 @@ def listen4clients(listenPort):
         newthread.start()
 
 def main():
-    config = Config.read_config()
+    config = read_config()
     listen4clients(config.port)
 
 if __name__ == '__main__':

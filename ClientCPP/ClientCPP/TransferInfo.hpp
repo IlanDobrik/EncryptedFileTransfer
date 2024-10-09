@@ -8,7 +8,7 @@
 
 struct IPAddress {
     std::string ip;
-    uint32_t port;
+    std::string port;
 };
 
 struct TransferInfo {

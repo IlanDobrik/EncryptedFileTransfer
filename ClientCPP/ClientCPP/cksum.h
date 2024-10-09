@@ -469,22 +469,22 @@ private:
     uint32_t n;
 };
 
-uint32_t memcrc(const Buffer& buf) {
-    unsigned int v = 0, c = 0;
-    unsigned long s = 0;
-    unsigned int tabidx = 0;
-    
-    uint32_t n = buf.size();
-    for (int i = 0; i < n; i++) {
-        tabidx = (s >> 24) ^ buf.data()[i];
-        s = UNSIGNED((s << 8)) ^ crctab[0][tabidx];
-    }
-    
-    while (n) {
-        c = n & 0377;
-        n = n >> 8;
-        s = UNSIGNED(s << 8) ^ crctab[0][(s >> 24) ^ c];
-    }
-    return (unsigned long)UNSIGNED(~s);
-
-}
+//uint32_t memcrc(const Buffer& buf) {
+//    unsigned int v = 0, c = 0;
+//    unsigned long s = 0;
+//    unsigned int tabidx = 0;
+//    
+//    uint32_t n = buf.size();
+//    for (int i = 0; i < n; i++) {
+//        tabidx = (s >> 24) ^ buf.data()[i];
+//        s = UNSIGNED((s << 8)) ^ crctab[0][tabidx];
+//    }
+//    
+//    while (n) {
+//        c = n & 0377;
+//        n = n >> 8;
+//        s = UNSIGNED(s << 8) ^ crctab[0][(s >> 24) ^ c];
+//    }
+//    return (unsigned long)UNSIGNED(~s);
+//
+//}

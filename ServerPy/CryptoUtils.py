@@ -8,7 +8,7 @@ class SymetricKey:
     def __init__(self, public_rsa_key, aes_key : bytes =b"") -> None:
         self.public_rsa_key = public_rsa_key
         self.session_key = aes_key if aes_key != b"" else get_random_bytes(32)
-        self.cipher_aes = AES.new(self.session_key, AES.MODE_CBC)
+        self.cipher_aes = AES.new(self.session_key, AES.MODE_CBC, iv=b'\x00'*16)
 
     def encrypt(self, data):
         return self.cipher_aes.encrypt_and_digest(data) 

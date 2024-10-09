@@ -23,7 +23,7 @@ int main(void) {
     auto me = Me::get(ME_PATH);
     auto rsa = RSA(RSA_PRIVATE_KEY_PATH);
     auto aes = AES(Buffer());
-    auto connection = std::make_unique<Connection>("127.0.0.1", "1256");
+    auto connection = std::make_unique<Connection>(transferInfo.ipAddress.ip, transferInfo.ipAddress.port);
 
     auto client = Client(std::move(connection), rsa, aes, me, transferInfo);
     client.run("C:/Temp/a.txt");
