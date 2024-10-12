@@ -31,26 +31,26 @@ class ClientThread(threading.Thread):
     def register(self, request : Requests.RegisterRequest):
         if self.db.exists(request.name):
             response = Responses.FailedRegisterResponse()
-            logging.info(f"Client {request.name} failed to register")
+            logging.info(f"Client {request.name.strip(b"\x00")} failed to register")
         else:
             client_id = Utils.generateUUID()
             response = Responses.SuccessfulRegisterResponse(client_id)
             self.client_id = client_id
             self.db.insert(client_id, request.name, b"")
-            logging.info(f"Client {request.name} with id {client_id} registered successfuly")
+            logging.info(f"Client {request.name.strip(b"\x00")} with id {client_id} registered successfuly")
         self.csocket.sendall(response.pack())
 
     def reconnect(self, request: Requests.ReConnectRequest):
         client_id = request.clientID
         if not self.db.exists(client_id):
             response = Responses.RejectedReconnectResponse(client_id)
-            logging.info(f"Client {request.clientID} failed to reconnect")
+            logging.info(f"Client {request.clientID}: failed to reconnect")
         else:
             public_key = self.db.get(client_id)
             self.symetric_key = SymetricKey(public_key)
             response = Responses.SuccessfulReconnectResponse(client_id, self.symetric_key.get_encrypted_session_key())
             self.client_id = client_id
-            logging.info(f"Client {request.clientID} reconnected successfuly")
+            logging.info(f"Client {request.clientID}: reconnected successfuly")
         self.csocket.sendall(response.pack())
 
     def generalFailure(self):
@@ -61,7 +61,7 @@ class ClientThread(threading.Thread):
         # TODO if no symetric key = fail
         content = self.symetric_key.decrypt(request.content)
         file_name = request.file_name
-        logging.info(f"Client {request.clientID} uploding {file_name} {request.current_chunk}/{request.total_chunks}")
+        logging.info(f"Client {request.clientID}: uploding {file_name.strip(b"\x00")} {request.current_chunk}/{request.total_chunks}")
 
         while request.current_chunk != request.total_chunks:
             data = self.csocket.recv(1024)
@@ -70,12 +70,15 @@ class ClientThread(threading.Thread):
                 self.generalFailure()
             request = Requests.SendFileRequest(request)
             content += self.symetric_key.decrypt(request.content)[:request.original_size]
-            logging.info(f"Client {request.clientID} uploding {file_name} {request.current_chunk}/{request.total_chunks}")
+            logging.info(f"Client {request.clientID.strip(b"\x00")} uploding {file_name.strip(b"\x00")} {request.current_chunk}/{request.total_chunks}")
 
         checksum = memcrc(content)
-        logging.info(f"Client {request.clientID} finished uploding {file_name}. checksum {checksum}")
+        logging.info(f"Client {request.clientID}: finished uploding {file_name.strip(b"\x00")}. checksum {checksum}")
         response = Responses.CRCResponse(self.client_id, content.__len__(), file_name, checksum)
         self.csocket.sendall(response.pack())
+
+    def OkCrc(self, request):
+        logging.info(f"Client {request.clientID}: Checksum verified")
 
     def run(self):
         try:
@@ -92,6 +95,10 @@ class ClientThread(threading.Thread):
                     self.reconnect(Requests.ReConnectRequest(data))
                 elif request.code == Requests.SendFileRequest.CODE:
                     self.get_file(Requests.SendFileRequest(data))
+                elif request.code == Requests.OkCRCRequest.CODE:
+                    self.OkCrc(request)
+                
+                    
         except Exception as e:
             self.generalFailure()
             logging.error(f"Caught exception {e}")
