@@ -56,7 +56,7 @@ void Client::run(const std::string & filePath)
 void Client::registerClient()
 {
 	m_connection->write(RegisterRequest(ClientID{0}, m_transferInfo.clientName).serialize());
-	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
+	auto data = readResponse();
 	Response response(data);
 
 	switch (response.getCode()) {
@@ -75,7 +75,7 @@ void Client::registerClient()
 void Client::reconnect()
 {
 	m_connection->write(ReconnectRequest(m_me.UUID, m_me.name).serialize());
-	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
+	auto data = readResponse();
 	Response response(data);
 
 	switch (response.getCode()) {
@@ -96,7 +96,7 @@ void Client::reconnect()
 void Client::exchangeKeys()
 {
 	m_connection->write(AesRequest(m_me.UUID, m_me.name, m_rsa.getPublicKey()).serialize());
-	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
+	auto data = readResponse();
 	Response response(data);
 
 	switch (response.getCode()) {
@@ -159,13 +159,12 @@ void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 
 void Client::CRCCheck(const FileName& fileName, const CheckSum& checksum)
 {
-	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
+	auto data = readResponse();
 	Response response(data);
 
 	switch (response.getCode()) {
 	case CRC_RESPONSE_CODE: {
-		if (checksum == CRCResponse(data).getCheckSum())
-		{
+		if (checksum == CRCResponse(data).getCheckSum()) {
 			m_connection->write(OKCRCRequest(m_me.UUID, fileName).serialize());
 		}
 		else {
@@ -180,4 +179,17 @@ void Client::CRCCheck(const FileName& fileName, const CheckSum& checksum)
 	default:
 		throw std::exception("Bad response for CRC request");
 	}
+}
+
+Buffer Client::readResponse()
+{
+	auto header = m_connection->read(RESPONSE_HEADER_SIZE);
+	Response response(header);
+
+	auto payload = m_connection->read(response.getPayloadSize());
+	
+	Buffer out(header.cbegin(), header.cend());
+	out.insert(out.end(), payload.cbegin(), payload.cend());
+
+	return out;
 }

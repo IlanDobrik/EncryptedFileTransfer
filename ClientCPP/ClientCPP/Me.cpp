@@ -34,7 +34,9 @@ Me Me::get(const std::string& mePath) {
     std::copy(clientNameBin.begin(), clientNameBin.end(), clientname.begin());
 
     std::string clientIdString = getLine(configFile);
-    clientIdString = boost::algorithm::unhex(clientIdString);
+    if (!clientIdString.empty()) {
+        clientIdString = boost::algorithm::unhex(clientIdString);
+    }
     ClientID clientId{ 0 };
     std::copy(clientIdString.begin(), clientIdString.end(), clientId.begin());
 

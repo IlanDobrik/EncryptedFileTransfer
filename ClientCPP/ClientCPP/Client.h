@@ -29,7 +29,7 @@ private:
 		const CurrentPacketNumber current, const TotalPacketNumber total);
 	void CRCCheck(const FileName& fileName, const CheckSum& checksum);
 
-	// std::unique_ptr<Response> readResponse();
+	Buffer readResponse();
 
 private:
 	std::unique_ptr<Connection> m_connection;
