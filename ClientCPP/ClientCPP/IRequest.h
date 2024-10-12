@@ -25,14 +25,26 @@ protected:
 };
 
 
-class RequestWithName : public Request {
+class RequestWithClientName : public Request {
 public:
-	RequestWithName(const ClientID& clientId, const ClientName& clientName, const Code& code);
+	RequestWithClientName(const ClientID& clientId, const ClientName& clientName, const Code& code);
 
 protected:
-	virtual ~RequestWithName() = default;
+	virtual ~RequestWithClientName() = default;
 	virtual Buffer _serialize();
 
 protected:
 	ClientName m_clientName;
+};
+
+class RequestWithFileName : public Request {
+public:
+	RequestWithFileName(const ClientID& clientId, const FileName& fileName, const Code& code);
+
+protected:
+	virtual ~RequestWithFileName() = default;
+	virtual Buffer _serialize();
+
+protected:
+	FileName m_fileName;
 };

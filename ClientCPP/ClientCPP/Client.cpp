@@ -20,6 +20,9 @@
 #include "CRCResponse.h"
 #include "cksum.h"
 
+#include "CRCRequest.h"
+#include "AckResponse.h"
+
 
 Client::Client(std::unique_ptr<Connection> connection, const RSA& rsa, const AES& aes, const Me& me, const TransferInfo& transferInfo) :
 	m_connection(std::move(connection)), 
@@ -50,33 +53,11 @@ void Client::run(const std::string & filePath)
 	uploadFile(filePath);
 }
 
-// TODO catch handler, finnally handler
-// attemptXTimes(3, uploadFile, catch_handler=respond 901, finally_handler= respond 902)
-void Client::attemptXTimes(const uint32_t maxRetries, std::function<void(void)> f)
-{
-	uint32_t currentTry = 1;
-	while (true) {
-		try  {
-			return f();
-		}
-		catch (std::exception e) {
-			if (currentTry < maxRetries) {
-				std::cout << "Attempt " << currentTry << ": " << e.what();
-				currentTry++;
-			}
-			else {
-				// TODO send abort?
-				throw e;
-			}
-		}
-	}
-}
-
 void Client::registerClient()
 {
 	m_connection->write(RegisterRequest(ClientID{0}, m_transferInfo.clientName).serialize());
 	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
-	ResponseHeader response(data);
+	Response response(data);
 
 	switch (response.getCode()) {
 	case SUCCESSFUL_REGISTER_RESPONSE_CODE:
@@ -95,7 +76,7 @@ void Client::reconnect()
 {
 	m_connection->write(ReconnectRequest(m_me.UUID, m_me.name).serialize());
 	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
-	ResponseHeader response(data);
+	Response response(data);
 
 	switch (response.getCode()) {
 	case SUCCESSFUL_RECONNECT_RESPONSE_CODE:
@@ -116,7 +97,7 @@ void Client::exchangeKeys()
 {
 	m_connection->write(AesRequest(m_me.UUID, m_me.name, m_rsa.getPublicKey()).serialize());
 	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
-	ResponseHeader response(data);
+	Response response(data);
 
 	switch (response.getCode()) {
 	case AES_RESPONSE_CODE:
@@ -141,7 +122,7 @@ void Client::uploadFile(const std::string& filePath)
 	const uint64_t fileSize = std::filesystem::file_size(filePath);
 	
 	const TotalPacketNumber totalPackets = fileSize / MAX_PACKET_SIZE + 
-		(0 == fileSize % MAX_PACKET_SIZE ? 0: 1); // Add 1 for less than packetSize
+		(0 == fileSize % MAX_PACKET_SIZE ? 0: 1); // Add 1 for left over
 	CurrentPacketNumber currentPacket = 1;
 
 	std::ifstream file(filePath, std::ios_base::binary);
@@ -158,7 +139,7 @@ void Client::uploadFile(const std::string& filePath)
 	}
 	file.close();
 
-	CRCCheck(crc.calc());
+	CRCCheck(fileName, crc.calc());
 }
 
 void Client::uploadPacket(const FileName& filename, const Buffer& packet,
@@ -176,37 +157,27 @@ void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 		filename, encryptedPacket).serialize());
 }
 
-// TODO
-void Client::CRCCheck(const CheckSum& checksum)
+void Client::CRCCheck(const FileName& fileName, const CheckSum& checksum)
 {
 	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
-	ResponseHeader response(data);
+	Response response(data);
 
 	switch (response.getCode()) {
-	case 1603: {
-		auto aba = CRCResponse(data).getCheckSum();
+	case CRC_RESPONSE_CODE: {
 		if (checksum == CRCResponse(data).getCheckSum())
 		{
-			std::cout << "Fuck yes\n";
-			// TODO respond 900
-			// Finish
+			m_connection->write(OKCRCRequest(m_me.UUID, fileName).serialize());
 		}
 		else {
-			// TODO respond 901
+			m_connection->write(BadCRCRequest(m_me.UUID, fileName).serialize());
 		}
-		// TODO on 3rd attempt - respond 902 + Finish
+		// Finish
 		break;
 		}
-		
-	case 1604:
+	case ACK_RESPONSE_CODE:
 		// Finish
 		break;
 	default:
-		throw std::exception("Bad response for key exchange request");
+		throw std::exception("Bad response for CRC request");
 	}
-}
-
-Buffer Client::readResponse()
-{
-	return Buffer();
 }

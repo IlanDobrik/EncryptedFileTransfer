@@ -2,6 +2,7 @@
 
 #include "IResponse.h"
 
+constexpr Code CRC_RESPONSE_CODE = 1603;
 
 class CRCResponse : public HeaderWithClientID
 {
@@ -16,4 +17,3 @@ protected:
 	FileName m_fileName;
 	CheckSum m_checksum;
 };
-

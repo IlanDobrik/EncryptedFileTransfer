@@ -5,7 +5,7 @@
 
 constexpr Code FAILED_REGISTER_RESPONSE_CODE = 1601;
 
-class FailedRegisterResponse : public ResponseHeader
+class FailedRegisterResponse : public Response
 {
 	FailedRegisterResponse(const Buffer& input);
 

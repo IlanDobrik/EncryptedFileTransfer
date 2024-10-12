@@ -41,38 +41,44 @@
     <ClCompile Include="IResponse.cpp">
       <Filter>Responses\IResponse</Filter>
     </ClCompile>
-    <ClCompile Include="SuccessfulRegisterResponse.cpp">
-      <Filter>Responses\SuccessfulRegister</Filter>
-    </ClCompile>
     <ClCompile Include="Connection.cpp">
       <Filter>Connection</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
       <Filter>Client</Filter>
     </ClCompile>
-    <ClCompile Include="FailedRegisterResponse.h">
-      <Filter>Responses\FailedRegister</Filter>
-    </ClCompile>
     <ClCompile Include="AesResponse.cpp">
       <Filter>Responses\Aes</Filter>
-    </ClCompile>
-    <ClCompile Include="FailedRegisterResponse.cpp">
-      <Filter>Responses\FailedRegister</Filter>
     </ClCompile>
     <ClCompile Include="SendFileRequest.cpp">
       <Filter>Requests\SendFile</Filter>
     </ClCompile>
-    <ClCompile Include="SuccessfulReconnectResponse.cpp">
-      <Filter>Responses\SuccessfulReconnect</Filter>
-    </ClCompile>
-    <ClCompile Include="FailedReconnectResponse.cpp">
-      <Filter>Responses\FailedReconnect</Filter>
+    <ClCompile Include="cksum.h">
+      <Filter>Encryption</Filter>
     </ClCompile>
     <ClCompile Include="CRCResponse.cpp">
       <Filter>Responses\CRC</Filter>
     </ClCompile>
-    <ClCompile Include="cksum.h">
-      <Filter>Encryption</Filter>
+    <ClCompile Include="CRCRequest.cpp">
+      <Filter>Requests\CRC</Filter>
+    </ClCompile>
+    <ClCompile Include="AckResponse.cpp">
+      <Filter>Responses\Ack</Filter>
+    </ClCompile>
+    <ClCompile Include="FailedReconnectResponse.cpp">
+      <Filter>Responses\Reconnect</Filter>
+    </ClCompile>
+    <ClCompile Include="SuccessfulReconnectResponse.cpp">
+      <Filter>Responses\Reconnect</Filter>
+    </ClCompile>
+    <ClCompile Include="SuccessfulRegisterResponse.cpp">
+      <Filter>Responses\Register</Filter>
+    </ClCompile>
+    <ClCompile Include="FailedRegisterResponse.cpp">
+      <Filter>Responses\Register</Filter>
+    </ClCompile>
+    <ClCompile Include="FailedRegisterResponse.h">
+      <Filter>Responses\Register</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,17 +115,11 @@
     <Filter Include="Responses\IResponse">
       <UniqueIdentifier>{96613ec4-d533-4411-b93d-d8f44b2a297b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Responses\SuccessfulRegister">
-      <UniqueIdentifier>{ff404d1c-a5fc-4fc7-b38c-dd599835d244}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Connection">
       <UniqueIdentifier>{368cd0ca-2908-4940-ba15-0948566277b3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Client">
       <UniqueIdentifier>{083b815e-d683-4627-8711-4d6c777e1583}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Responses\FailedRegister">
-      <UniqueIdentifier>{ec8992af-3e93-4106-9c67-b921cf3f5a5c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Responses\Aes">
       <UniqueIdentifier>{7a844e31-dea9-49a6-82e8-83b42ef13d81}</UniqueIdentifier>
@@ -127,14 +127,20 @@
     <Filter Include="Requests\SendFile">
       <UniqueIdentifier>{5331636b-7505-4705-b751-39204f76309a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Responses\SuccessfulReconnect">
-      <UniqueIdentifier>{bdc4f439-61e6-4aa5-b50a-4e14a8cb7f5f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Responses\FailedReconnect">
-      <UniqueIdentifier>{bb75ab62-40f7-4ff0-bd01-afeb420f07ef}</UniqueIdentifier>
+    <Filter Include="Requests\CRC">
+      <UniqueIdentifier>{e056b8f6-d5ed-420e-a0b4-5bec03129446}</UniqueIdentifier>
     </Filter>
     <Filter Include="Responses\CRC">
-      <UniqueIdentifier>{d80923f5-4a41-4cbc-a209-5eecddac271d}</UniqueIdentifier>
+      <UniqueIdentifier>{d202e448-a240-4f7a-99b5-72f8aed3700b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Responses\Reconnect">
+      <UniqueIdentifier>{9586c22a-9660-4eaf-b14c-fbf5819cbed7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Responses\Register">
+      <UniqueIdentifier>{de216818-b31e-4211-a19e-0482ce2fa24a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Responses\Ack">
+      <UniqueIdentifier>{a9f3749c-1ad7-4a56-b50c-7815d0c41a34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -168,9 +174,6 @@
     <ClInclude Include="IResponse.h">
       <Filter>Responses\IResponse</Filter>
     </ClInclude>
-    <ClInclude Include="SuccessfulRegisterResponse.h">
-      <Filter>Responses\SuccessfulRegister</Filter>
-    </ClInclude>
     <ClInclude Include="Connection.h">
       <Filter>Connection</Filter>
     </ClInclude>
@@ -183,14 +186,23 @@
     <ClInclude Include="SendFileRequest.h">
       <Filter>Requests\SendFile</Filter>
     </ClInclude>
-    <ClInclude Include="SuccessfulReconnectResponse.h">
-      <Filter>Responses\SuccessfulReconnect</Filter>
-    </ClInclude>
-    <ClInclude Include="FailedReconnectResponse.h">
-      <Filter>Responses\FailedReconnect</Filter>
-    </ClInclude>
     <ClInclude Include="CRCResponse.h">
       <Filter>Responses\CRC</Filter>
+    </ClInclude>
+    <ClInclude Include="CRCRequest.h">
+      <Filter>Requests\CRC</Filter>
+    </ClInclude>
+    <ClInclude Include="AckResponse.h">
+      <Filter>Responses\Ack</Filter>
+    </ClInclude>
+    <ClInclude Include="FailedReconnectResponse.h">
+      <Filter>Responses\Reconnect</Filter>
+    </ClInclude>
+    <ClInclude Include="SuccessfulReconnectResponse.h">
+      <Filter>Responses\Reconnect</Filter>
+    </ClInclude>
+    <ClInclude Include="SuccessfulRegisterResponse.h">
+      <Filter>Responses\Register</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AckResponse.cpp" />
     <ClCompile Include="AESEncryption.cpp" />
     <ClCompile Include="AesRequest.cpp" />
     <ClCompile Include="AesResponse.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Connection.cpp" />
+    <ClCompile Include="CRCRequest.cpp" />
     <ClCompile Include="CRCResponse.cpp" />
     <ClCompile Include="FailedReconnectResponse.cpp" />
     <ClCompile Include="FailedRegisterResponse.cpp" />
@@ -162,12 +164,14 @@
     <ClCompile Include="TransferInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AckResponse.h" />
     <ClInclude Include="AESEncryption.hpp" />
     <ClInclude Include="AesRequest.h" />
     <ClInclude Include="AesResponse.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Common.hpp" />
     <ClInclude Include="Connection.h" />
+    <ClInclude Include="CRCRequest.h" />
     <ClInclude Include="CRCResponse.h" />
     <ClInclude Include="FailedReconnectResponse.h" />
     <ClInclude Include="Hardcoded.h" />

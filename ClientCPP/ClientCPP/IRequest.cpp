@@ -42,11 +42,21 @@ Buffer Request::serializeHeader(const PayloadSize payloadSize)
 	return header;
 }
 
-RequestWithName::RequestWithName(const ClientID& clientId, const ClientName& clientName, const Code& code) : 
+RequestWithClientName::RequestWithClientName(const ClientID& clientId, const ClientName& clientName, const Code& code) : 
 	Request(clientId, code), m_clientName(clientName)
 { }
 
-Buffer RequestWithName::_serialize()
+Buffer RequestWithClientName::_serialize()
 {
 	return Buffer(m_clientName.cbegin(), m_clientName.cend());
+}
+
+RequestWithFileName::RequestWithFileName(const ClientID& clientId, const FileName& fileName, const Code& code) :
+	Request(clientId, code), m_fileName(fileName)
+{
+}
+
+Buffer RequestWithFileName::_serialize()
+{
+	return Buffer(m_fileName.cbegin(), m_fileName.cend());
 }

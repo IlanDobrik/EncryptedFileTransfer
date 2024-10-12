@@ -1,6 +1,6 @@
 #include "IResponse.h"
 
-ResponseHeader::ResponseHeader(const Buffer& input)
+Response::Response(const Buffer& input)
 {
 	if (input.size() < RESPONSE_HEADER_SIZE)
 	{
@@ -27,18 +27,18 @@ ResponseHeader::ResponseHeader(const Buffer& input)
 	std::copy_n(p, m_payload.size(), m_payload.data());
 }
 
-Code ResponseHeader::getCode() const
+Code Response::getCode() const
 {
 	return m_code;
 }
 
-PayloadSize ResponseHeader::getPayloadSize() const
+PayloadSize Response::getPayloadSize() const
 {
 	return m_payloadSize;
 }
 
 HeaderWithClientID::HeaderWithClientID(const Buffer& input) : 
-	ResponseHeader(input)
+	Response(input)
 {
 	auto p = m_payload.begin();
 	std::copy(m_payload.begin(), m_payload.end(), m_clientID.data());

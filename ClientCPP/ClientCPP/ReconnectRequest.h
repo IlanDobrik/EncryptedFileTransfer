@@ -8,7 +8,7 @@
 
 constexpr Code RECONNECT_REQUEST_CODE = 827;
 
-class ReconnectRequest : public RequestWithName {
+class ReconnectRequest : public RequestWithClientName {
 public:
 	ReconnectRequest(const ClientID& clientID, const ClientName& clientName);
 	virtual ~ReconnectRequest() = default;

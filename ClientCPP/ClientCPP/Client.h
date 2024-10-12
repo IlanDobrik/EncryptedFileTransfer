@@ -21,14 +21,15 @@ public:
 
 
 private:
-	static void attemptXTimes(const uint32_t maxRetries, std::function<void()>);
 	void registerClient();
 	void reconnect();
 	void exchangeKeys();
 	void uploadFile(const std::string& filePath);
 	void uploadPacket(const FileName& filename, const Buffer& packet,
 		const CurrentPacketNumber current, const TotalPacketNumber total);
-	void CRCCheck(const CheckSum& checksum);
+	void CRCCheck(const FileName& fileName, const CheckSum& checksum);
+
+	// std::unique_ptr<Response> readResponse();
 
 private:
 	std::unique_ptr<Connection> m_connection;
