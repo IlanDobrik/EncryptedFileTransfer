@@ -6,7 +6,7 @@
 constexpr Code SUCCESSFUL_REGISTER_RESPONSE_CODE = 1600;
 
 
-class SuccessfulRegisterResponse : public ResponseWithClientID
+class SuccessfulRegisterResponse : public HeaderWithClientID
 {
 public:
 	SuccessfulRegisterResponse(const Buffer& input);

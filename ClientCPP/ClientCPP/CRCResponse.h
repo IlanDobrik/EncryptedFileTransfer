@@ -3,7 +3,7 @@
 #include "IResponse.h"
 
 
-class CRCResponse : public ResponseWithClientID
+class CRCResponse : public HeaderWithClientID
 {
 public:
 	CRCResponse(const Buffer& input);

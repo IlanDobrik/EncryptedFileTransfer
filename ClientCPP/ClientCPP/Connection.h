@@ -13,7 +13,7 @@ public:
 	Connection(const std::string& address, const std::string& port);
 	virtual ~Connection() = default;
 
-	Buffer read(const uint32_t size = DEFAULT_READ_SIZE);
+	Buffer read(const uint32_t size);
 	void write(const Buffer& data);
 
 private:

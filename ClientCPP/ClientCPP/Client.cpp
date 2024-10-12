@@ -75,8 +75,8 @@ void Client::attemptXTimes(const uint32_t maxRetries, std::function<void(void)> 
 void Client::registerClient()
 {
 	m_connection->write(RegisterRequest(ClientID{0}, m_transferInfo.clientName).serialize());
-	auto data = m_connection->read();
-	Response response(data);
+	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
+	ResponseHeader response(data);
 
 	switch (response.getCode()) {
 	case SUCCESSFUL_REGISTER_RESPONSE_CODE:
@@ -94,8 +94,8 @@ void Client::registerClient()
 void Client::reconnect()
 {
 	m_connection->write(ReconnectRequest(m_me.UUID, m_me.name).serialize());
-	auto data = m_connection->read();
-	Response response(data);
+	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
+	ResponseHeader response(data);
 
 	switch (response.getCode()) {
 	case SUCCESSFUL_RECONNECT_RESPONSE_CODE:
@@ -115,8 +115,8 @@ void Client::reconnect()
 void Client::exchangeKeys()
 {
 	m_connection->write(AesRequest(m_me.UUID, m_me.name, m_rsa.getPublicKey()).serialize());
-	auto data = m_connection->read();
-	Response response(data);
+	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
+	ResponseHeader response(data);
 
 	switch (response.getCode()) {
 	case AES_RESPONSE_CODE:
@@ -179,8 +179,8 @@ void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 // TODO
 void Client::CRCCheck(const CheckSum& checksum)
 {
-	auto data = m_connection->read();
-	Response response(data);
+	auto data = m_connection->read(RESPONSE_HEADER_SIZE);
+	ResponseHeader response(data);
 
 	switch (response.getCode()) {
 	case 1603: {
@@ -204,4 +204,9 @@ void Client::CRCCheck(const CheckSum& checksum)
 	default:
 		throw std::exception("Bad response for key exchange request");
 	}
+}
+
+Buffer Client::readResponse()
+{
+	return Buffer();
 }

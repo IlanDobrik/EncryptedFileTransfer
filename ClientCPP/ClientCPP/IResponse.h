@@ -12,11 +12,11 @@ S write(S begin, T data) {
 }
 
 
-class Response
+class ResponseHeader
 {
 public:
-	Response(const Buffer& input); 
-	virtual ~Response() = default;
+	ResponseHeader(const Buffer& input); 
+	virtual ~ResponseHeader() = default;
 
 	Code getCode() const;
 	PayloadSize getPayloadSize() const;
@@ -29,10 +29,10 @@ protected:
 };
 
 
-class ResponseWithClientID : public Response {
+class HeaderWithClientID : public ResponseHeader {
 public:
-	ResponseWithClientID(const Buffer& input);
-	virtual ~ResponseWithClientID() = default;
+	HeaderWithClientID(const Buffer& input);
+	virtual ~HeaderWithClientID() = default;
 	ClientID getClientID() const;
 
 private:

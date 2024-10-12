@@ -2,6 +2,6 @@
 #include <sstream>
 
 SuccessfulRegisterResponse::SuccessfulRegisterResponse(const Buffer& input) :
-	ResponseWithClientID(input)
+	HeaderWithClientID(input)
 { }
 

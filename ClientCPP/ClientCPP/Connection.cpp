@@ -15,7 +15,7 @@ Buffer Connection::read(const uint32_t size)
 	Buffer header(receive_buffer.size(), 0);
 	receive_buffer.sgetn(reinterpret_cast<char*>(header.data()), header.size());
 
-	Response rs(header);
+	ResponseHeader rs(header);
 	bytesRead = boost::asio::read(m_socket, receive_buffer, boost::asio::transfer_exactly(rs.getPayloadSize()), error);
 	Buffer payload(receive_buffer.size(), 0);
 	receive_buffer.sgetn(reinterpret_cast<char*>(payload.data()), payload.size());

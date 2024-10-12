@@ -1,7 +1,7 @@
 #include "CRCResponse.h"
 
 CRCResponse::CRCResponse(const Buffer& input) :
-	ResponseWithClientID(input)
+	HeaderWithClientID(input)
 {
 	auto p = m_payload.begin();
 
