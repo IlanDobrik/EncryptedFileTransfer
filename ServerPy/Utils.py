@@ -1,2 +1,4 @@
-def generateUUID():
-    return "123"
+import uuid
+
+def generateUUID() -> bytes:
+    return bytes.fromhex(uuid.uuid4().hex)

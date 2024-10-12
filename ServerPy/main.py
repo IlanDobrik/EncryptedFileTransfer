@@ -1,12 +1,10 @@
-import threading
-import os
 import logging
 import socket
-import struct
 
 from config import read_config
 from ClientThread import ClientThread
 import DB
+import Utils
 
 
 def listen4clients(listenPort):
@@ -26,6 +24,8 @@ def listen4clients(listenPort):
         newthread.start()
 
 def main():
+    logging.getLogger().setLevel(logging.INFO)
+    
     config = read_config()
     listen4clients(config.port)
 

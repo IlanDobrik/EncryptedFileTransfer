@@ -14,11 +14,13 @@ from DB import DB
 class ClientThread(threading.Thread):
     def __init__(self, db, clientAddress: socket.socket, clientsocket: socket.AddressInfo):
         threading.Thread.__init__(self, daemon=True)
-        self.db : DB = db
         self.csocket: socket.socket = clientsocket
         self.caddress = clientAddress
-        self.client_id = None
+        
+        self.db : DB = db
+        self.client_id : bytes = None
         self.symetric_key = None
+        logging.info(f"Recived connection from {clientAddress}")
     
     def send_aes(self, request: Requests.PublicKeyRequest):
         self.symetric_key = SymetricKey(request.publicKey)
@@ -29,34 +31,37 @@ class ClientThread(threading.Thread):
     def register(self, request : Requests.RegisterRequest):
         if self.db.exists(request.name):
             response = Responses.FailedRegisterResponse()
+            logging.info(f"Client {request.name} failed to register")
         else:
-            client_id = Utils.generateUUID().encode()
+            client_id = Utils.generateUUID()
             response = Responses.SuccessfulRegisterResponse(client_id)
             self.client_id = client_id
             self.db.insert(client_id, request.name, b"")
+            logging.info(f"Client {request.name} with id {client_id} registered successfuly")
         self.csocket.sendall(response.pack())
 
     def reconnect(self, request: Requests.ReConnectRequest):
-        # TODO no clientID - search by name
         client_id = request.clientID
         if not self.db.exists(client_id):
             response = Responses.RejectedReconnectResponse(client_id)
-            # TODO register the client - cause we need to generate clientId, which means we are sigining him
+            logging.info(f"Client {request.clientID} failed to reconnect")
         else:
             public_key = self.db.get(client_id)
             self.symetric_key = SymetricKey(public_key)
             response = Responses.SuccessfulReconnectResponse(client_id, self.symetric_key.get_encrypted_session_key())
             self.client_id = client_id
+            logging.info(f"Client {request.clientID} reconnected successfuly")
         self.csocket.sendall(response.pack())
 
     def generalFailure(self):
+        logging.info(f"General failure")
         self.csocket.sendall(Responses.GeneralFailureResponse().pack())
 
     def get_file(self, request: Requests.SendFileRequest):
         # TODO if no symetric key = fail
-        
         content = self.symetric_key.decrypt(request.content)
         file_name = request.file_name
+        logging.info(f"Client {request.clientID} uploding {file_name} {request.current_chunk}/{request.total_chunks}")
 
         while request.current_chunk != request.total_chunks:
             data = self.csocket.recv(1024)
@@ -65,15 +70,18 @@ class ClientThread(threading.Thread):
                 self.generalFailure()
             request = Requests.SendFileRequest(request)
             content += self.symetric_key.decrypt(request.content)[:request.original_size]
+            logging.info(f"Client {request.clientID} uploding {file_name} {request.current_chunk}/{request.total_chunks}")
 
-        response = Responses.CRCResponse(self.client_id, content.__len__(), file_name, memcrc(content))
+        checksum = memcrc(content)
+        logging.info(f"Client {request.clientID} finished uploding {file_name}. checksum {checksum}")
+        response = Responses.CRCResponse(self.client_id, content.__len__(), file_name, checksum)
         self.csocket.sendall(response.pack())
 
     def run(self):
         try:
             while True:
                 # TODO read header, then payload
-                data = self.csocket.recv(1024) # TODO on connection close, this returns b''
+                data = self.csocket.recv(1024*1024) # TODO on connection close, this returns b''
                 request = Requests.Request(data)
                 # TODO command factory
                 if request.code == Requests.RegisterRequest.CODE:
@@ -84,7 +92,6 @@ class ClientThread(threading.Thread):
                     self.reconnect(Requests.ReConnectRequest(data))
                 elif request.code == Requests.SendFileRequest.CODE:
                     self.get_file(Requests.SendFileRequest(data))
-                # TODO add file recive
         except Exception as e:
             self.generalFailure()
             logging.error(f"Caught exception {e}")

@@ -39,7 +39,7 @@ Client::~Client()
 
 void Client::run(const std::string & filePath)
 {
-	if (m_me.UUID.empty()) {
+	if (m_me.isEmpty()) {
 		registerClient();
 	}
 	else {
@@ -135,7 +135,7 @@ void Client::uploadFile(const std::string& filePath)
 {
 	constexpr uint32_t MAX_PACKET_SIZE = 1024 * 1024; // 1GB
 
-	FileName fileName;
+	FileName fileName{0};
 	std::copy(filePath.cbegin(), filePath.cend(), fileName.begin());
 
 	const uint64_t fileSize = std::filesystem::file_size(filePath);
