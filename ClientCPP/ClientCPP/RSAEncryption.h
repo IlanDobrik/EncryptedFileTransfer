@@ -20,4 +20,4 @@ private:
     CryptoPP::RSA::PublicKey m_pubKey;
 };
 
-void generate_keys();
+void generate_keys(const std::string& privatePath);

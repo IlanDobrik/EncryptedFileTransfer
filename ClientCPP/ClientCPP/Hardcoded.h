@@ -6,6 +6,7 @@
 #define TRANSFER_INFO_PATH "./transfer.info"
 #define ME_PATH "./me.info"
 #define RSA_PRIVATE_KEY_PATH "./priv.key"
+#define RSA_PUBLIC_KEY_PATH "./pub.key"
 
 
 constexpr uint8_t CLIENT_VERSION = 3;

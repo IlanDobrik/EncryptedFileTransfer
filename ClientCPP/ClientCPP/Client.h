@@ -15,7 +15,7 @@ class Client
 {
 public:
 	Client(std::unique_ptr<Connection> connection, 
-		const RSA& rsa, const AES& aes, 
+		const RSA& rsa, 
 		const Me& me, const TransferInfo& transferInfo);
 	virtual ~Client();
 	void run(const std::string& filePath);

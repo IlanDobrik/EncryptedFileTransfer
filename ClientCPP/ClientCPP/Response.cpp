@@ -28,7 +28,7 @@ ResponsePayloadWithClientID::ResponsePayloadWithClientID(const Buffer& input) :
 	ResponsePayload(input)
 {
 	auto p = m_payload.begin();
-	p = write(p, m_clientID.data());
+	p = write(p, m_clientID);
 
 	m_payload = Buffer(p, m_payload.end()); // Move pointer so others can inherite and continue parse
 }

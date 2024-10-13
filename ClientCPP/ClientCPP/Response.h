@@ -12,6 +12,13 @@ S write(S begin, T* data) {
 	return begin + dataSize;
 }
 
+template<typename T=Buffer, typename S>
+S write(S begin, T& data) {
+	uint8_t dataSize = data.size();
+	std::copy_n(begin, dataSize, reinterpret_cast<uint8_t*>(data.data()));
+	return begin + dataSize;
+}
+
 class ResponseHeader
 {
 public:

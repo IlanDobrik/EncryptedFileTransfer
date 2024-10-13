@@ -17,15 +17,25 @@
 #include <iostream>
 
 
+RSA getRSA() {
+    try {
+        return RSA(RSA_PRIVATE_KEY_PATH);
+    }
+    catch (...)
+    {
+        generate_keys(RSA_PRIVATE_KEY_PATH);
+    }
+    return RSA(RSA_PRIVATE_KEY_PATH);
+}
+
 int main(void) {
     try {
         auto transferInfo = getTransferInfo(TRANSFER_INFO_PATH);
         auto me = Me::get(ME_PATH);
-        auto rsa = RSA(RSA_PRIVATE_KEY_PATH);
-        auto aes = AES(Buffer());
+        auto rsa = getRSA();
         auto connection = std::make_unique<Connection>(transferInfo.ipAddress.ip, transferInfo.ipAddress.port);
 
-        auto client = Client(std::move(connection), rsa, aes, me, transferInfo);
+        auto client = Client(std::move(connection), rsa, me, transferInfo);
         client.run(transferInfo.filePath);
     }
     catch (const std::exception& e) {

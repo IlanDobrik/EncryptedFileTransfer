@@ -6,22 +6,16 @@
 
 CryptoPP::AutoSeededRandomPool rng;
 
-void generate_keys() {
+void generate_keys(const std::string& privatePath) {
     CryptoPP::RSA::PrivateKey privKey;
     CryptoPP::RSA::PublicKey pubKey;
     privKey.Initialize(rng, 1024);
     pubKey = CryptoPP::RSA::PublicKey(privKey);
-    std::cout << "Generation ended." << std::endl;
 
-    std::ofstream privFile("priv.key", std::ios::binary);
+    std::ofstream privFile(privatePath, std::ios::binary);
     CryptoPP::FileSink privSink(privFile);
     privKey.DEREncode(privSink);
     privFile.close();
-
-    std::ofstream pubFile("public.key", std::ios::binary);
-    CryptoPP::FileSink pubSink(pubFile);
-    pubKey.DEREncode(pubSink);
-    pubFile.close();
 }
 
 
@@ -29,7 +23,7 @@ RSA::RSA(const std::string& privateKeyPath) {
     CryptoPP::RSA::PrivateKey privKey;
     std::ifstream privFile(privateKeyPath, std::ios::binary);
     if (!privFile.is_open()) {
-        throw std::exception("Failed to open privateKeyPath");
+        throw std::exception("Failed to open private key file");
     }
 
     CryptoPP::FileSource privSource(privFile, true);

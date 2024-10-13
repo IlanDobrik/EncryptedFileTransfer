@@ -24,7 +24,7 @@
 #include "AckResponse.h"
 
 
-Client::Client(std::unique_ptr<Connection> connection, const RSA& rsa, const AES& aes, const Me& me, const TransferInfo& transferInfo) :
+Client::Client(std::unique_ptr<Connection> connection, const RSA& rsa, const Me& me, const TransferInfo& transferInfo) :
 	m_connection(std::move(connection)), 
 	m_rsa(rsa), m_aes(nullptr), 
 	m_me(me), m_transferInfo(transferInfo)
@@ -182,9 +182,9 @@ void Client::CRCCheck(const FileName& fileName, const CheckSum& checksum)
 Response Client::readResponse()
 {
 	auto header = m_connection->read(RESPONSE_HEADER_SIZE);
-	ResponseHeader response(header);
+	ResponseHeader responseHeader(header);
 
-	auto payload = m_connection->read(response.getPayloadSize());
+	auto payload = m_connection->read(responseHeader.getPayloadSize());
 
 	return {header, payload};
 }
