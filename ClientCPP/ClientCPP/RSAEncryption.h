@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "rsa.h"
-#include "common.hpp"
+#include "cryptopp\rsa.h"
+#include "common.h"
 #include "Hardcoded.h"
 
 

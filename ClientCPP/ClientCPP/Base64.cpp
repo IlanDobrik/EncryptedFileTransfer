@@ -1,4 +1,4 @@
-#include "Base64.hpp"
+#include "Base64.h"
 
 Buffer Base64::encode(const Buffer& input)
 {

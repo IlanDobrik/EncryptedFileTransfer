@@ -4,10 +4,11 @@
 #include <functional>
 
 #include "Connection.h"
-#include "Me.hpp"
-#include "TransferInfo.hpp"
-#include "RSAEncryption.hpp"
-#include "AESEncryption.hpp"
+#include "Me.h"
+#include "TransferInfo.h"
+#include "RSAEncryption.h"
+#include "AESEncryption.h"
+#include "Response.h"
 
 
 class Client
@@ -29,7 +30,7 @@ private:
 		const CurrentPacketNumber current, const TotalPacketNumber total);
 	void CRCCheck(const FileName& fileName, const CheckSum& checksum);
 
-	Buffer readResponse();
+	Response readResponse();
 
 private:
 	std::unique_ptr<Connection> m_connection;

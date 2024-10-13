@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Common.hpp"
+#include "Common.h"
 
 
 static constexpr size_t AES_KEY_SIZE = 256;

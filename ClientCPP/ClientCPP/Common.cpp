@@ -1,4 +1,4 @@
-#include "Common.hpp"
+#include "Common.h"
 
 
 std::string removeNulls(std::string s)

@@ -1,15 +1,13 @@
 #pragma once
 
-#include "IResponse.h"
+#include "Response.h"
 
 
 constexpr Code FAILED_REGISTER_RESPONSE_CODE = 1601;
 
-class FailedRegisterResponse : public Response
+class FailedRegisterResponse : public ResponsePayloadWithClientID
 {
+public:
 	FailedRegisterResponse(const Buffer& input);
-
-private:
-	ClientID m_clientID;
 };
 

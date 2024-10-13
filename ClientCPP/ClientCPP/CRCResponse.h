@@ -1,10 +1,10 @@
 #pragma once
 
-#include "IResponse.h"
+#include "Response.h"
 
 constexpr Code CRC_RESPONSE_CODE = 1603;
 
-class CRCResponse : public HeaderWithClientID
+class CRCResponse : public ResponsePayloadWithClientID
 {
 public:
 	CRCResponse(const Buffer& input);

@@ -1,10 +1,9 @@
-#include "AESEncryption.hpp"
+#include "AESEncryption.h"
 
-#include "aes.h"
-#include "rng.h"
-#include "base64.h"
-#include "modes.h"
-#include "filters.h"
+#include "cryptopp\aes.h"
+#include "cryptopp\rng.h"
+#include "cryptopp\modes.h"
+#include "cryptopp\filters.h"
 
 constexpr unsigned int DEFAULT_KEYLENGTH = 32;
 

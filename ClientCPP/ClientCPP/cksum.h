@@ -1,6 +1,8 @@
+#pragma once
+
 #include <cstdint>
 #include <string>
-#include "Common.hpp"
+#include "Common.h"
 
 
 uint_fast32_t const crctab[8][256] = {
@@ -446,8 +448,10 @@ public:
     virtual ~Crc() = default;
 
     void add(const Buffer& buf) {
-        n += buf.size();
-        for (int i = 0; i < buf.size(); i++) {
+        uint32_t bufferSize = static_cast<uint32_t>(buf.size());
+        
+        n += bufferSize;
+        for (int i = 0; i < bufferSize; i++) {
             tabidx = (s >> 24) ^ buf.data()[i];
             s = UNSIGNED((s << 8)) ^ crctab[0][tabidx];
         }

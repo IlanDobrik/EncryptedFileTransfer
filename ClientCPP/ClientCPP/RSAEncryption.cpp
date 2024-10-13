@@ -1,9 +1,8 @@
-#include "files.h"
-#include "osrng.h"
-#include "base64.h"
-#include "cryptlib.h"
+#include "cryptopp\files.h"
+#include "cryptopp\osrng.h"
+#include "cryptopp\cryptlib.h"
 
-#include "RSAEncryption.hpp"
+#include "RSAEncryption.h"
 
 CryptoPP::AutoSeededRandomPool rng;
 

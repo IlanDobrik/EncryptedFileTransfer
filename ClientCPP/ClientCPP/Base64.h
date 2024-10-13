@@ -1,8 +1,8 @@
 #pragma once
 
-#include "base64.h"
+#include "cryptopp\base64.h"
 
-#include "Common.hpp"
+#include "Common.h"
 
 
 class Base64 {

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 
-#include "Common.hpp"
+#include "Common.h"
 #include "Hardcoded.h"
 
 struct Me {

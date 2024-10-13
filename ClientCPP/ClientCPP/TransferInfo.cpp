@@ -1,5 +1,5 @@
-#include "TransferInfo.hpp"
-#include "Common.hpp"
+#include "TransferInfo.h"
+#include "Common.h"
 
 
 IPAddress getIP(std::ifstream& transferInfoFile) {

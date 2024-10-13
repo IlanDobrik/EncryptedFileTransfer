@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IRequest.h"
+#include "Request.h"
 #include "Hardcoded.h"
-#include "Common.hpp"
+#include "Common.h"
 
 
 constexpr Code REGISTER_REQUEST_CODE = 825;

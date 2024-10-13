@@ -1,12 +1,12 @@
 #pragma once
 
-#include "IResponse.h"
+#include "Response.h"
 #include "SuccessfulRegisterResponse.h"
 
 
 constexpr Code AES_RESPONSE_CODE = 1602;
 
-class AesResponse : public HeaderWithClientID
+class AesResponse : public ResponsePayloadWithClientID
 {
 public:
 	AesResponse(const Buffer& input);

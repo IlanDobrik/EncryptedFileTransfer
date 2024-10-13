@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IRequest.h"
+#include "Request.h"
 #include "Hardcoded.h"
-#include "Common.hpp"
+#include "Common.h"
 
 
 constexpr Code AES_REQUEST_CODE = 826;

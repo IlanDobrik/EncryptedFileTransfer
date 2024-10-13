@@ -3,7 +3,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "IResponse.h"
+#include "Response.h"
 
 #include "RegisterRequest.h"
 #include "SuccessfulRegisterResponse.h"
@@ -57,11 +57,10 @@ void Client::registerClient()
 {
 	m_connection->write(RegisterRequest(ClientID{0}, m_transferInfo.clientName).serialize());
 	auto data = readResponse();
-	Response response(data);
 
-	switch (response.getCode()) {
+	switch (data.responseHeader.getCode()) {
 	case SUCCESSFUL_REGISTER_RESPONSE_CODE:
-		m_me.UUID = SuccessfulRegisterResponse(data).getClientID();
+		m_me.UUID = SuccessfulRegisterResponse(data.responsePayload).getClientID();
 		exchangeKeys();
 		break;
 	case FAILED_REGISTER_RESPONSE_CODE:
@@ -76,13 +75,12 @@ void Client::reconnect()
 {
 	m_connection->write(ReconnectRequest(m_me.UUID, m_me.name).serialize());
 	auto data = readResponse();
-	Response response(data);
 
-	switch (response.getCode()) {
+	switch (data.responseHeader.getCode()) {
 	case SUCCESSFUL_RECONNECT_RESPONSE_CODE:
 		m_aes = std::make_unique<AES>(
 			m_rsa.decrypt(
-				SuccessfulReconnectResponse(data).getAesKey()));
+				SuccessfulReconnectResponse(data.responsePayload).getAesKey()));
 		break;
 	case FAILED_RECONNECT_RESPONSE_CODE:
 		m_me.reset();
@@ -97,13 +95,12 @@ void Client::exchangeKeys()
 {
 	m_connection->write(AesRequest(m_me.UUID, m_me.name, m_rsa.getPublicKey()).serialize());
 	auto data = readResponse();
-	Response response(data);
 
-	switch (response.getCode()) {
+	switch (data.responseHeader.getCode()) {
 	case AES_RESPONSE_CODE:
 		m_aes = std::make_unique<AES>(
 			m_rsa.decrypt(
-				AesResponse(data).getAesKey()));
+				AesResponse(data.responsePayload).getAesKey()));
 		m_me.WTF_IS_THIS = m_aes->getKey();
 		break;
 
@@ -121,8 +118,9 @@ void Client::uploadFile(const std::string& filePath)
 
 	const uint64_t fileSize = std::filesystem::file_size(filePath);
 	
-	const TotalPacketNumber totalPackets = fileSize / MAX_PACKET_SIZE + 
-		(0 == fileSize % MAX_PACKET_SIZE ? 0: 1); // Add 1 for left over
+	const TotalPacketNumber totalPackets = static_cast<TotalPacketNumber>(
+		fileSize / MAX_PACKET_SIZE + 
+		(0 == fileSize % MAX_PACKET_SIZE ? 0: 1)); // Add 1 for left over
 	CurrentPacketNumber currentPacket = 1;
 
 	std::ifstream file(filePath, std::ios_base::binary);
@@ -130,7 +128,7 @@ void Client::uploadFile(const std::string& filePath)
 	for (;currentPacket - 1 < totalPackets; ++currentPacket) {
 		Buffer packet(MAX_PACKET_SIZE, 0);
 		
-		file.read(reinterpret_cast<char*>(packet.data()), packet.size());
+		file.read(reinterpret_cast<char*>(packet.data()), static_cast<std::streamsize>(packet.size()));
 		uint32_t bytesRead = file.gcount();
 		packet.resize(bytesRead);
 
@@ -145,11 +143,11 @@ void Client::uploadFile(const std::string& filePath)
 void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 	const CurrentPacketNumber current, const TotalPacketNumber total)
 {
-	OriginalSize originalFileSize = packet.size();
+	OriginalSize originalFileSize = static_cast<OriginalSize>(packet.size());
 
 	Buffer encryptedPacket = m_aes->encrypt(packet);
 	Buffer decryptedPacket = m_aes->decrypt(encryptedPacket);
-	ContentSize encryptedFileSize = encryptedPacket.size();
+	ContentSize encryptedFileSize = static_cast<ContentSize>(encryptedPacket.size());
 
 	m_connection->write(SendFileRequest(m_me.UUID,
 		encryptedFileSize, originalFileSize,
@@ -160,11 +158,10 @@ void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 void Client::CRCCheck(const FileName& fileName, const CheckSum& checksum)
 {
 	auto data = readResponse();
-	Response response(data);
 
-	switch (response.getCode()) {
+	switch (data.responseHeader.getCode()) {
 	case CRC_RESPONSE_CODE: {
-		if (checksum == CRCResponse(data).getCheckSum()) {
+		if (checksum == CRCResponse(data.responsePayload).getCheckSum()) {
 			m_connection->write(OKCRCRequest(m_me.UUID, fileName).serialize());
 		}
 		else {
@@ -181,15 +178,13 @@ void Client::CRCCheck(const FileName& fileName, const CheckSum& checksum)
 	}
 }
 
-Buffer Client::readResponse()
+
+Response Client::readResponse()
 {
 	auto header = m_connection->read(RESPONSE_HEADER_SIZE);
-	Response response(header);
+	ResponseHeader response(header);
 
 	auto payload = m_connection->read(response.getPayloadSize());
-	
-	Buffer out(header.cbegin(), header.cend());
-	out.insert(out.end(), payload.cbegin(), payload.cend());
 
-	return out;
+	return {header, payload};
 }

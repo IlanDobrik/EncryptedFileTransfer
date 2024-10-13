@@ -1,9 +1,9 @@
 #pragma once
 
-#include "IRequest.h"
+#include "Request.h"
 #include "RegisterRequest.h"
 #include "Hardcoded.h"
-#include "Common.hpp"
+#include "Common.h"
 
 constexpr Code OK_CRC_REQUEST_CODE = 900;
 

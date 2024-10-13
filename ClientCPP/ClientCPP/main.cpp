@@ -1,15 +1,15 @@
 #include <array>
 #include <memory>
 
-#include "Common.hpp"
+#include "Common.h"
 #include "Hardcoded.h"
 
-#include "TransferInfo.hpp"
-#include "Me.hpp"
+#include "TransferInfo.h"
+#include "Me.h"
 
-#include "RSAEncryption.hpp"
-#include "AESEncryption.hpp"
-#include "Base64.hpp"
+#include "RSAEncryption.h"
+#include "AESEncryption.h"
+#include "Base64.h"
 
 #include "Connection.h"
 #include "Client.h"

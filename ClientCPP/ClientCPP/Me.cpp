@@ -1,5 +1,5 @@
-#include "Me.hpp"
-#include "Base64.hpp"
+#include "Me.h"
+#include "Base64.h"
 
 #include <boost/algorithm/hex.hpp>
 

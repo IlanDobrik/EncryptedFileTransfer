@@ -1,10 +1,10 @@
 #pragma once
 
-#include "IResponse.h"
+#include "Response.h"
 
 constexpr Code ACK_RESPONSE_CODE = 1604;
 
-class AckResponse : public HeaderWithClientID
+class AckResponse : public ResponsePayloadWithClientID
 {
 public:
 	AckResponse(const Buffer& input);

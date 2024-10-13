@@ -1,6 +1,6 @@
 #include "Connection.h"
 
-#include "IResponse.h"
+#include "Response.h"
 
 Connection::Connection(const std::string& address, const std::string& port) :
 	m_ioContext(), m_socket(_initialize_socket(m_ioContext, address, port))
