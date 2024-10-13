@@ -60,22 +60,19 @@ class ClientThread(threading.Thread):
     def get_file(self, header: Requests.RequestHeader, payload: Requests.SendFileRequest):
         # TODO if no symetric key = fail
         content = self.symetric_key.decrypt(payload.content)
-        file_name = payload.file_name
-        logging.info(f"Client {header.clientID}: uploding {file_name.strip(b"\x00")} {payload.current_chunk}/{payload.total_chunks}")
+        file_name = payload.file_name.strip(b"\x00")
+        
+        logging.info(f"Client {header.clientID}: uploding {file_name} {payload.current_chunk}/{payload.total_chunks}")
 
-        while payload.current_chunk != payload.total_chunks:
-            data = self.csocket.recv(1024)
-            payload = Requests.RequestHeader(data)
-            if payload.code != Requests.SendFileRequest.CODE:
-                self.generalFailure()
-            payload = Requests.SendFileRequest(payload)
-            content += self.symetric_key.decrypt(payload.content)[:payload.original_size]
-            logging.info(f"Client {header.clientID.strip(b"\x00")} uploding {file_name.strip(b"\x00")} {payload.current_chunk}/{payload.total_chunks}")
+        with open(file_name, "ba+") as f:
+            f.write(content)
+            
+        if payload.current_chunk == payload.total_chunks:
+            checksum = memcrc(content)
+            logging.info(f"Client {header.clientID}: finished uploding {file_name}. checksum {checksum}")
+            response = Responses.CRCResponse(self.client_id, content.__len__(), file_name, checksum)
+            self.csocket.sendall(response.pack())
 
-        checksum = memcrc(content)
-        logging.info(f"Client {header.clientID}: finished uploding {file_name.strip(b"\x00")}. checksum {checksum}")
-        response = Responses.CRCResponse(self.client_id, content.__len__(), file_name, checksum)
-        self.csocket.sendall(response.pack())
 
     def OkCrc(self, header: Requests.RequestHeader, payload: Requests.OkCRCRequest):
         logging.info(f"Client {header.clientID}: Checksum verified for {payload.file_name.strip(b"\x00")}")
