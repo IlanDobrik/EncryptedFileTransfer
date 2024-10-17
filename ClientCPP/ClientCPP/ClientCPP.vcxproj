@@ -109,6 +109,7 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);C:\Projects\Uni\Defensive\cryptopp890\;C:\Projects\Uni\Defensive\boost_1_86_0\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ObjectFileName>$(IntDir)/%(RelativeDir)/</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -140,21 +141,19 @@
     <ClCompile Include="AesRequest.cpp" />
     <ClCompile Include="AesResponse.cpp" />
     <ClCompile Include="Base64.cpp" />
-    <ClCompile Include="Base64.h" />
     <ClCompile Include="cksum.h" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="CLILogger.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Connection.cpp" />
     <ClCompile Include="CRCRequest.cpp" />
     <ClCompile Include="CRCResponse.cpp" />
     <ClCompile Include="FailedReconnectResponse.cpp" />
     <ClCompile Include="FailedRegisterResponse.cpp" />
-    <ClCompile Include="FailedRegisterResponse.h" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="Response.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Me.cpp" />
-    <ClCompile Include="Request.h" />
     <ClCompile Include="ReconnectRequest.cpp" />
     <ClCompile Include="RegisterRequest.cpp" />
     <ClCompile Include="RSAEncryption.cpp" />
@@ -168,14 +167,18 @@
     <ClInclude Include="AESEncryption.h" />
     <ClInclude Include="AesRequest.h" />
     <ClInclude Include="AesResponse.h" />
+    <ClInclude Include="Base64.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="CLILogger.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Connection.h" />
     <ClInclude Include="CRCRequest.h" />
     <ClInclude Include="CRCResponse.h" />
     <ClInclude Include="FailedReconnectResponse.h" />
+    <ClInclude Include="FailedRegisterResponse.h" />
     <ClInclude Include="Hardcoded.h" />
     <ClInclude Include="ILogger.h" />
+    <ClInclude Include="Request.h" />
     <ClInclude Include="Response.h" />
     <ClInclude Include="Me.h" />
     <ClInclude Include="ReconnectRequest.h" />

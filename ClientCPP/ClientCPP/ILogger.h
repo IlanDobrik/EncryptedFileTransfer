@@ -6,7 +6,5 @@
 class ILogger
 {
 public:
-	virtual void write(const std::string& data) {
-		std::cout << data << std::endl;
-	};
+	virtual void write(const std::string& data) = 0;
 };

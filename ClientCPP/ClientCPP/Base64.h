@@ -5,9 +5,8 @@
 #include "Common.h"
 
 
-class Base64 {
-public:
-	static Buffer encode(const Buffer& input);
-	static Buffer decode(const Buffer& input);
+namespace Base64 {
+	Buffer encode(const Buffer& input);
+	Buffer decode(const Buffer& input);
 };
 

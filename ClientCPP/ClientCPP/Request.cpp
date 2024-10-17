@@ -54,7 +54,7 @@ RequestWithFileName::RequestWithFileName(const ClientID& clientId, const FileNam
 
 Buffer RequestWithFileName::serializeHeader(const PayloadSize payloadSize)
 {
-	Buffer header = Request::serializeHeader(payloadSize + m_fileName.size());
+	Buffer header = Request::serializeHeader(payloadSize +static_cast<uint32_t>(m_fileName.size()));
 	header.insert(header.end(), m_fileName.cbegin(), m_fileName.cend());
 
 	return header;
