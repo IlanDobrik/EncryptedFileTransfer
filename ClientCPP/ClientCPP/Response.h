@@ -7,14 +7,14 @@
 
 template<typename T, typename S>
 S read_primitive(S src, T& dst) {
-	uint8_t dataSize = sizeof(dst);
+	uint32_t dataSize = static_cast<uint32_t>(sizeof(dst));
 	std::copy_n(src, dataSize, reinterpret_cast<uint8_t*>(&dst));
 	return src + dataSize;
 }
 
 template<typename T=Buffer, typename S>
 S read_buffer(S src, T& dst) {
-	uint8_t dataSize = dst.size();
+	uint32_t dataSize = static_cast<uint32_t>(dst.size());
 	std::copy_n(src, dataSize, reinterpret_cast<uint8_t*>(dst.data()));
 	return src + dataSize;
 }

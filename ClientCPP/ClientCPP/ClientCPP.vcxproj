@@ -175,6 +175,7 @@
     <ClInclude Include="CRCResponse.h" />
     <ClInclude Include="FailedReconnectResponse.h" />
     <ClInclude Include="Hardcoded.h" />
+    <ClInclude Include="ILogger.h" />
     <ClInclude Include="Response.h" />
     <ClInclude Include="Me.h" />
     <ClInclude Include="ReconnectRequest.h" />

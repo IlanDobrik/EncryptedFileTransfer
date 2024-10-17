@@ -9,12 +9,13 @@
 #include "RSAEncryption.h"
 #include "AESEncryption.h"
 #include "Response.h"
+#include "ILogger.h"
 
 
 class Client
 {
 public:
-	Client(std::unique_ptr<Connection> connection, 
+	Client(std::unique_ptr<Connection> connection, std::unique_ptr<ILogger> logger,
 		const RSA& rsa, 
 		const Me& me, const TransferInfo& transferInfo);
 	virtual ~Client();
@@ -29,11 +30,14 @@ private:
 	void uploadPacket(const FileName& filename, const Buffer& packet,
 		const CurrentPacketNumber current, const TotalPacketNumber total);
 	void CRCCheck(const FileName& fileName, const CheckSum& checksum);
+	void finish();
 
 	Response readResponse();
 
 private:
 	std::unique_ptr<Connection> m_connection;
+	std::unique_ptr<ILogger> m_logger;
+
 	RSA m_rsa;
 	std::unique_ptr<AES> m_aes;
 	Me m_me;

@@ -6,14 +6,14 @@
 
 template<typename T, typename S>
 S write_primitive(S dst, const T& src) {
-	uint8_t dataSize = sizeof(src);
+	uint32_t dataSize = static_cast<uint32_t>(sizeof(src));
 	std::copy_n(reinterpret_cast<const uint8_t*>(&src), dataSize, dst);
 	return dst + dataSize;
 }
 
 template<typename T = Buffer, typename S>
 S write_buffer(S dst, const T& src) {
-	uint8_t dataSize = src.size();
+	uint32_t dataSize = static_cast<uint32_t>(src.size());
 	std::copy_n(reinterpret_cast<const uint8_t*>(src.data()), dataSize, dst);
 	return dst + dataSize;
 }

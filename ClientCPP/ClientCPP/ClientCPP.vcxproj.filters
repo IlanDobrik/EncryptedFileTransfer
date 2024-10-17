@@ -80,6 +80,9 @@
     <ClCompile Include="FailedRegisterResponse.h">
       <Filter>Responses\Register</Filter>
     </ClCompile>
+    <ClCompile Include="CLILogger.cpp">
+      <Filter>Logger\CLILogger</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TransferInfo">
@@ -142,6 +145,12 @@
     <Filter Include="Requests\Request">
       <UniqueIdentifier>{7cbf855b-1810-40dd-8e20-04f764cf5004}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Logger">
+      <UniqueIdentifier>{4c675999-c44c-46df-b710-5cea11209a4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logger\CLILogger">
+      <UniqueIdentifier>{4527d756-c2b9-4a44-bbe7-670ba000bfab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Me.h">
@@ -203,6 +212,12 @@
     </ClInclude>
     <ClInclude Include="SuccessfulRegisterResponse.h">
       <Filter>Responses\Register</Filter>
+    </ClInclude>
+    <ClInclude Include="ILogger.h">
+      <Filter>Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="CLILogger.h">
+      <Filter>Logger\CLILogger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

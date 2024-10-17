@@ -14,7 +14,6 @@
 #include "Connection.h"
 #include "Client.h"
 
-#include <iostream>
 
 
 RSA getRSA() {
@@ -34,8 +33,9 @@ int main(void) {
         auto me = Me::get(ME_PATH);
         auto rsa = getRSA();
         auto connection = std::make_unique<Connection>(transferInfo.ipAddress.ip, transferInfo.ipAddress.port);
+        auto logger = std::make_unique<ILogger>();
 
-        auto client = Client(std::move(connection), rsa, me, transferInfo);
+        auto client = Client(std::move(connection), std::move(logger), rsa, me, transferInfo);
         client.run(transferInfo.filePath);
     }
     catch (const std::exception& e) {

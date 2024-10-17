@@ -41,7 +41,7 @@ RequestWithClientName::RequestWithClientName(const ClientID& clientId, const Cli
 
 Buffer RequestWithClientName::serializeHeader(const PayloadSize payloadSize)
 {
-	Buffer header = Request::serializeHeader(payloadSize + m_clientName.size());
+	Buffer header = Request::serializeHeader(payloadSize + static_cast<uint32_t>(m_clientName.size()));
 	header.insert(header.end(), m_clientName.cbegin(), m_clientName.cend());
 
 	return header;

@@ -24,8 +24,9 @@
 #include "AckResponse.h"
 
 
-Client::Client(std::unique_ptr<Connection> connection, const RSA& rsa, const Me& me, const TransferInfo& transferInfo) :
-	m_connection(std::move(connection)), 
+Client::Client(std::unique_ptr<Connection> connection, std::unique_ptr<ILogger> logger,
+	const RSA& rsa, const Me& me, const TransferInfo& transferInfo) :
+	m_connection(std::move(connection)), m_logger(std::move(logger)),
 	m_rsa(rsa), m_aes(nullptr), 
 	m_me(me), m_transferInfo(transferInfo)
 { 
@@ -55,11 +56,13 @@ void Client::run(const std::string & filePath)
 
 void Client::registerClient()
 {
+	m_logger->write("Attempting to register");
 	m_connection->write(RegisterRequest(ClientID{0}, m_transferInfo.clientName).serialize());
 	auto data = readResponse();
 
 	switch (data.responseHeader.getCode()) {
 	case SUCCESSFUL_REGISTER_RESPONSE_CODE:
+		m_logger->write("Registered successfuly");
 		m_me.UUID = SuccessfulRegisterResponse(data.responsePayload).getClientID();
 		exchangeKeys();
 		break;
@@ -73,16 +76,19 @@ void Client::registerClient()
 
 void Client::reconnect()
 {
+	m_logger->write("Attempting to reconnect");
 	m_connection->write(ReconnectRequest(m_me.UUID, m_me.name).serialize());
 	auto data = readResponse();
 
 	switch (data.responseHeader.getCode()) {
 	case SUCCESSFUL_RECONNECT_RESPONSE_CODE:
+		m_logger->write("Reconnected successfuly");
 		m_aes = std::make_unique<AES>(
 			m_rsa.decrypt(
 				SuccessfulReconnectResponse(data.responsePayload).getAesKey()));
 		break;
 	case FAILED_RECONNECT_RESPONSE_CODE:
+		m_logger->write("Reconnect rejected");
 		m_me.reset();
 		registerClient();
 		break;
@@ -93,11 +99,13 @@ void Client::reconnect()
 
 void Client::exchangeKeys()
 {
+	m_logger->write("Attempting to exchange keys");
 	m_connection->write(AesRequest(m_me.UUID, m_me.name, m_rsa.getPublicKey()).serialize());
 	auto data = readResponse();
 
 	switch (data.responseHeader.getCode()) {
 	case AES_RESPONSE_CODE:
+		m_logger->write("Exchanged keys successfuly");
 		m_aes = std::make_unique<AES>(
 			m_rsa.decrypt(
 				AesResponse(data.responsePayload).getAesKey()));
@@ -111,7 +119,8 @@ void Client::exchangeKeys()
 
 void Client::uploadFile(const std::string& filePath)
 {
-	constexpr uint32_t MAX_PACKET_SIZE = 1024 * 1024; // 1GB
+	m_logger->write("Attempting to upload file");
+	constexpr uint32_t MAX_PACKET_SIZE = 10;// 1024 * 1024; // 1GB
 
 	FileName fileName{0};
 	std::copy(filePath.cbegin(), filePath.cend(), fileName.begin());
@@ -129,7 +138,7 @@ void Client::uploadFile(const std::string& filePath)
 		Buffer packet(MAX_PACKET_SIZE, 0);
 		
 		file.read(reinterpret_cast<char*>(packet.data()), static_cast<std::streamsize>(packet.size()));
-		uint32_t bytesRead = file.gcount();
+		uint32_t bytesRead = static_cast<uint32_t>(file.gcount());
 		packet.resize(bytesRead);
 
 		crc.add(packet);
@@ -137,12 +146,14 @@ void Client::uploadFile(const std::string& filePath)
 	}
 	file.close();
 
+	m_logger->write("Finished uploding");
 	CRCCheck(fileName, crc.calc());
 }
 
 void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 	const CurrentPacketNumber current, const TotalPacketNumber total)
 {
+	m_logger->write("Uploding packet " + std::to_string(current) + " out of " + std::to_string(total));
 	OriginalSize originalFileSize = static_cast<OriginalSize>(packet.size());
 
 	Buffer encryptedPacket = m_aes->encrypt(packet);
@@ -157,24 +168,40 @@ void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 
 void Client::CRCCheck(const FileName& fileName, const CheckSum& checksum)
 {
+	m_logger->write("Verifing checksum");
 	auto data = readResponse();
 
 	switch (data.responseHeader.getCode()) {
 	case CRC_RESPONSE_CODE: {
 		if (checksum == CRCResponse(data.responsePayload).getCheckSum()) {
+			m_logger->write("Checksum is valid");
 			m_connection->write(OKCRCRequest(m_me.UUID, fileName).serialize());
+			finish();
 		}
 		else {
+			m_logger->write("Checksum is not valid");
 			m_connection->write(BadCRCRequest(m_me.UUID, fileName).serialize());
 		}
-		// Finish
 		break;
 		}
 	case ACK_RESPONSE_CODE:
-		// Finish
+		m_logger->write("Final attempt reached");
 		break;
 	default:
 		throw std::exception("Bad response for CRC request");
+	}
+}
+
+void Client::finish()
+{
+	auto data = readResponse();
+
+	switch (data.responseHeader.getCode()) {
+	case ACK_RESPONSE_CODE:
+		m_logger->write("Closing connection");
+		break;
+	default:
+		throw std::exception("Bad response for finish");
 	}
 }
 
