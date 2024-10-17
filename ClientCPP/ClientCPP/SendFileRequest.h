@@ -15,7 +15,7 @@ public:
 		const FileName& fileName, const Buffer& content);
 	virtual ~SendFileRequest() = default;
 
-	virtual Buffer _serialize();
+	virtual Buffer serializePayload();
 
 private:
 	const ContentSize m_contentSize;

@@ -7,7 +7,7 @@ Request::Request(const ClientID& clientId, const Code& code) :
 
 Buffer Request::serialize()
 {
-	Buffer payload = _serialize();
+	Buffer payload = serializePayload();
 	Buffer header = serializeHeader(static_cast<PayloadSize>(payload.size()));
 	Buffer out;
 
@@ -17,7 +17,7 @@ Buffer Request::serialize()
 	return out;
 }
 
-Buffer Request::_serialize()
+Buffer Request::serializePayload()
 {
 	return Buffer();
 }
@@ -25,19 +25,12 @@ Buffer Request::_serialize()
 Buffer Request::serializeHeader(const PayloadSize payloadSize)
 {
 	Buffer header(REQUEST_HEADER_SIZE, 0);
-	uint8_t* data = header.data(); // TODO remove raw pointer?
+	auto p = header.begin();
 
-	memcpy(data, m_clientID.data(), m_clientID.size());
-	data += m_clientID.size();
-
-	memcpy(data, &m_version, sizeof(m_version));
-	data += sizeof(m_version);
-
-	memcpy(data, &m_code, sizeof(m_code));
-	data += sizeof(m_code);
-
-	memcpy(data, &payloadSize, sizeof(payloadSize));
-	data += sizeof(payloadSize);
+	p = write_buffer(p, m_clientID);
+	p = write_primitive(p, m_version);
+	p = write_primitive(p, m_code);
+	p = write_primitive(p, payloadSize);
 
 	return header;
 }
@@ -46,9 +39,12 @@ RequestWithClientName::RequestWithClientName(const ClientID& clientId, const Cli
 	Request(clientId, code), m_clientName(clientName)
 { }
 
-Buffer RequestWithClientName::_serialize()
+Buffer RequestWithClientName::serializeHeader(const PayloadSize payloadSize)
 {
-	return Buffer(m_clientName.cbegin(), m_clientName.cend());
+	Buffer header = Request::serializeHeader(payloadSize + m_clientName.size());
+	header.insert(header.end(), m_clientName.cbegin(), m_clientName.cend());
+
+	return header;
 }
 
 RequestWithFileName::RequestWithFileName(const ClientID& clientId, const FileName& fileName, const Code& code) :
@@ -56,7 +52,10 @@ RequestWithFileName::RequestWithFileName(const ClientID& clientId, const FileNam
 {
 }
 
-Buffer RequestWithFileName::_serialize()
+Buffer RequestWithFileName::serializeHeader(const PayloadSize payloadSize)
 {
-	return Buffer(m_fileName.cbegin(), m_fileName.cend());
+	Buffer header = Request::serializeHeader(payloadSize + m_fileName.size());
+	header.insert(header.end(), m_fileName.cbegin(), m_fileName.cend());
+
+	return header;
 }

@@ -11,22 +11,23 @@ SendFileRequest::SendFileRequest(const ClientID& clientId,
 	m_totalPackets(totalPackets),
 	m_fileName(fileName),
 	m_content(content)
-{
-}
+{ }
 
-Buffer SendFileRequest::_serialize()
+Buffer SendFileRequest::serializePayload()
 {
-	uint32_t payloadSize = sizeof(m_contentSize) + sizeof(m_originalSize) + sizeof(m_currentPacket) + sizeof(m_totalPackets) + sizeof(m_fileName) + m_content.size();
+	uint32_t payloadSize = sizeof(m_contentSize) + sizeof(m_originalSize) + \
+		sizeof(m_currentPacket) + sizeof(m_totalPackets) + \
+		sizeof(m_fileName) + static_cast<uint32_t>(m_content.size());
 	Buffer out(payloadSize, 0);
 
 	auto p = out.begin();
 
-	p = std::copy_n(reinterpret_cast<const uint8_t*>(&m_contentSize), sizeof(m_contentSize), p);
-	p = std::copy_n(reinterpret_cast<const uint8_t*>(&m_originalSize), sizeof(m_originalSize), p);
-	p = std::copy_n(reinterpret_cast<const uint8_t*>(&m_currentPacket), sizeof(m_currentPacket), p);
-	p = std::copy_n(reinterpret_cast<const uint8_t*>(&m_totalPackets), sizeof(m_totalPackets), p);
-	p = std::copy_n(reinterpret_cast<const uint8_t*>(&m_fileName), sizeof(m_fileName), p);
-	p = std::copy_n(m_content.data(), m_content.size(), p);
+	p = write_primitive(p, m_contentSize);
+	p = write_primitive(p, m_originalSize);
+	p = write_primitive(p, m_currentPacket);
+	p = write_primitive(p, m_totalPackets);
+	p = write_buffer(p, m_fileName);
+	p = write_buffer(p, m_content);
 
 	return out;
 }

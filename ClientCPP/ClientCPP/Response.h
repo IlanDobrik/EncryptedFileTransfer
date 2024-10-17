@@ -6,17 +6,17 @@
 #include <algorithm>
 
 template<typename T, typename S>
-S write(S begin, T* data) {
-	uint8_t dataSize = sizeof(*data);
-	std::copy_n(begin, dataSize, reinterpret_cast<uint8_t*>(data));
-	return begin + dataSize;
+S read_primitive(S src, T& dst) {
+	uint8_t dataSize = sizeof(dst);
+	std::copy_n(src, dataSize, reinterpret_cast<uint8_t*>(&dst));
+	return src + dataSize;
 }
 
 template<typename T=Buffer, typename S>
-S write(S begin, T& data) {
-	uint8_t dataSize = data.size();
-	std::copy_n(begin, dataSize, reinterpret_cast<uint8_t*>(data.data()));
-	return begin + dataSize;
+S read_buffer(S src, T& dst) {
+	uint8_t dataSize = dst.size();
+	std::copy_n(src, dataSize, reinterpret_cast<uint8_t*>(dst.data()));
+	return src + dataSize;
 }
 
 class ResponseHeader

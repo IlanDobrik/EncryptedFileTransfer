@@ -4,6 +4,21 @@
 #include "Hardcoded.h"
 
 
+template<typename T, typename S>
+S write_primitive(S dst, const T& src) {
+	uint8_t dataSize = sizeof(src);
+	std::copy_n(reinterpret_cast<const uint8_t*>(&src), dataSize, dst);
+	return dst + dataSize;
+}
+
+template<typename T = Buffer, typename S>
+S write_buffer(S dst, const T& src) {
+	uint8_t dataSize = src.size();
+	std::copy_n(reinterpret_cast<const uint8_t*>(src.data()), dataSize, dst);
+	return dst + dataSize;
+}
+
+
 class Request {
 public:
 	Request(const ClientID& clientId, const Code& code);
@@ -11,10 +26,8 @@ public:
 	
 protected:
 	virtual ~Request() = default;
-	virtual Buffer _serialize();
-
-private:
-	Buffer serializeHeader(const PayloadSize payloadSize);
+	virtual Buffer serializePayload();
+	virtual Buffer serializeHeader(const PayloadSize payloadSize);
 
 private:
 	Version m_version;
@@ -31,7 +44,7 @@ public:
 
 protected:
 	virtual ~RequestWithClientName() = default;
-	virtual Buffer _serialize();
+	virtual Buffer serializeHeader(const PayloadSize payloadSize);
 
 protected:
 	ClientName m_clientName;
@@ -43,7 +56,7 @@ public:
 
 protected:
 	virtual ~RequestWithFileName() = default;
-	virtual Buffer _serialize();
+	virtual Buffer serializeHeader(const PayloadSize payloadSize);
 
 protected:
 	FileName m_fileName;

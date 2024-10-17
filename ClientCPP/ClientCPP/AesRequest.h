@@ -12,7 +12,8 @@ public:
 	AesRequest(const ClientID& clientID, const ClientName& clientName, const PublicKey& publicKey);
 	virtual ~AesRequest() = default;
 
-	virtual Buffer _serialize();
+protected:
+	virtual Buffer serializePayload();
 
 private:
 	PublicKey m_publicKey;

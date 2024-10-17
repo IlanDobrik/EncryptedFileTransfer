@@ -5,9 +5,9 @@ CRCResponse::CRCResponse(const Buffer& input) :
 {
 	auto p = m_payload.begin();
 
-	p = write(p, &m_contentSize);
-	p = write(p, &m_fileName);
-	p = write(p, &m_checksum);
+	p = read_primitive(p, m_contentSize);
+	p = read_primitive(p, m_fileName);
+	p = read_primitive(p, m_checksum);
 
 	m_payload = Buffer(p, m_payload.end()); //Move pointer so others can inherite and continue parse
 }

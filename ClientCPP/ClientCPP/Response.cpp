@@ -9,9 +9,9 @@ ResponseHeader::ResponseHeader(const Buffer& input)
 	
 	auto p = input.begin();
 
-	p = write(p, &m_version);
-	p = write(p, &m_code);
-	p = write(p, &m_payloadSize);
+	p = read_primitive(p, m_version);
+	p = read_primitive(p, m_code);
+	p = read_primitive(p, m_payloadSize);
 }
 
 Code ResponseHeader::getCode() const
@@ -28,7 +28,7 @@ ResponsePayloadWithClientID::ResponsePayloadWithClientID(const Buffer& input) :
 	ResponsePayload(input)
 {
 	auto p = m_payload.begin();
-	p = write(p, m_clientID);
+	p = read_buffer(p, m_clientID);
 
 	m_payload = Buffer(p, m_payload.end()); // Move pointer so others can inherite and continue parse
 }

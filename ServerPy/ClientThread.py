@@ -68,6 +68,8 @@ class ClientThread(threading.Thread):
             f.write(content)
             
         if payload.current_chunk == payload.total_chunks:
+            with open(file_name, "rb") as f:
+                content = f.read()
             checksum = memcrc(content)
             logging.info(f"Client {header.clientID}: finished uploding {file_name}. checksum {checksum}")
             response = Responses.CRCResponse(self.client_id, content.__len__(), file_name, checksum)
@@ -79,6 +81,9 @@ class ClientThread(threading.Thread):
 
     def BadCrc(self, header: Requests.RequestHeader, payload: Requests.BadCRCRequest):
         logging.info(f"Client {header.clientID}: Checksum not verified for {payload.file_name.strip(b"\x00")}")
+    
+    def FinalBadCrc(self, header: Requests.RequestHeader, payload: Requests.FinalBadCRCRequest):
+        logging.info(f"Client {header.clientID}: Checksum not verified for {payload.file_name.strip(b"\x00")} for the final time. Closing connection")
 
     def run(self):
         try:
