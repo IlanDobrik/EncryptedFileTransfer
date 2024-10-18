@@ -25,8 +25,10 @@
 
 
 Client::Client(std::unique_ptr<Connection> connection, std::unique_ptr<ILogger> logger,
+	std::unique_ptr<File> file,
 	const RSA& rsa, const Me& me, const TransferInfo& transferInfo) :
 	m_connection(std::move(connection)), m_logger(std::move(logger)),
+	m_file(std::move(file)),
 	m_rsa(rsa), m_aes(nullptr), 
 	m_me(me), m_transferInfo(transferInfo)
 { 
@@ -41,7 +43,7 @@ Client::~Client()
 	catch (...) { }
 }
 
-void Client::run(const std::string & filePath)
+void Client::run()
 {
 	if (m_me.isEmpty()) {
 		registerClient();
@@ -51,7 +53,7 @@ void Client::run(const std::string & filePath)
 		reconnect();
 	}
 
-	uploadFile(filePath);
+	uploadFile();
 }
 
 void Client::registerClient()
@@ -117,41 +119,31 @@ void Client::exchangeKeys()
 	}
 }
 
-void Client::uploadFile(const std::string& filePath)
+void Client::uploadFile()
 {
 	m_logger->write("Attempting to upload file");
 	constexpr uint32_t MAX_PACKET_SIZE = 10;// 1024 * 1024; // 1GB
 
-	FileName fileName{0};
-	std::copy(filePath.cbegin(), filePath.cend(), fileName.begin());
-
-	const uint64_t fileSize = std::filesystem::file_size(filePath);
+	const uint64_t fileSize = m_file->getSize();
 	
 	const TotalPacketNumber totalPackets = static_cast<TotalPacketNumber>(
 		fileSize / MAX_PACKET_SIZE + 
 		(0 == fileSize % MAX_PACKET_SIZE ? 0: 1)); // Add 1 for left over
 	CurrentPacketNumber currentPacket = 1;
-
-	std::ifstream file(filePath, std::ios_base::binary);
+	
 	Crc crc;
 	for (;currentPacket - 1 < totalPackets; ++currentPacket) {
-		Buffer packet(MAX_PACKET_SIZE, 0);
+		Buffer packet = m_file->read(MAX_PACKET_SIZE);
 		
-		file.read(reinterpret_cast<char*>(packet.data()), static_cast<std::streamsize>(packet.size()));
-		uint32_t bytesRead = static_cast<uint32_t>(file.gcount());
-		packet.resize(bytesRead);
-
 		crc.add(packet);
-		uploadPacket(fileName, packet, currentPacket, totalPackets);
+		uploadPacket(packet, currentPacket, totalPackets);
 	}
-	file.close();
 
 	m_logger->write("Finished uploding");
-	CRCCheck(fileName, crc.calc());
+	CRCCheck(crc.calc());
 }
 
-void Client::uploadPacket(const FileName& filename, const Buffer& packet,
-	const CurrentPacketNumber current, const TotalPacketNumber total)
+void Client::uploadPacket(const Buffer& packet, const CurrentPacketNumber current, const TotalPacketNumber total)
 {
 	m_logger->write("Uploding packet " + std::to_string(current) + " out of " + std::to_string(total));
 	OriginalSize originalFileSize = static_cast<OriginalSize>(packet.size());
@@ -163,16 +155,17 @@ void Client::uploadPacket(const FileName& filename, const Buffer& packet,
 	m_connection->write(SendFileRequest(m_me.UUID,
 		encryptedFileSize, originalFileSize,
 		current, total,
-		filename, encryptedPacket).serialize());
+		convertTo<FileName>(m_file->getName()), encryptedPacket).serialize());
 }
 
-void Client::CRCCheck(const FileName& fileName, const CheckSum& checksum)
+void Client::CRCCheck(const CheckSum& checksum)
 {
 	m_logger->write("Verifing checksum");
 	auto data = readResponse();
 
 	switch (data.responseHeader.getCode()) {
 	case CRC_RESPONSE_CODE: {
+		auto fileName = convertTo<FileName>(m_file->getName());
 		if (checksum == CRCResponse(data.responsePayload).getCheckSum()) {
 			m_logger->write("Checksum is valid");
 			m_connection->write(OKCRCRequest(m_me.UUID, fileName).serialize());

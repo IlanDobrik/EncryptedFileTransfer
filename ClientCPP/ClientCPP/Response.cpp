@@ -1,10 +1,12 @@
 #include "Response.h"
 
+#include "ClientException.h"
+
 ResponseHeader::ResponseHeader(const Buffer& input)
 {
 	if (input.size() < RESPONSE_HEADER_SIZE)
 	{
-		throw std::exception("Input too short!");
+		throw ClientException("Input shorter than header size");
 	}
 	
 	auto p = input.begin();
@@ -27,6 +29,11 @@ PayloadSize ResponseHeader::getPayloadSize() const
 ResponsePayloadWithClientID::ResponsePayloadWithClientID(const Buffer& input) : 
 	ResponsePayload(input)
 {
+	if (m_payload.size() < m_clientID.size())
+	{
+		throw ClientException("Payload smaller than clientID");
+	}
+
 	auto p = m_payload.begin();
 	p = read_buffer(p, m_clientID);
 

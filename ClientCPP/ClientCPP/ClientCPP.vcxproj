@@ -143,6 +143,7 @@
     <ClCompile Include="Base64.cpp" />
     <ClCompile Include="cksum.h" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ClientException.cpp" />
     <ClCompile Include="CLILogger.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Connection.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="CRCResponse.cpp" />
     <ClCompile Include="FailedReconnectResponse.cpp" />
     <ClCompile Include="FailedRegisterResponse.cpp" />
+    <ClCompile Include="File.cpp" />
     <ClCompile Include="Request.cpp" />
     <ClCompile Include="Response.cpp" />
     <ClCompile Include="main.cpp" />
@@ -169,6 +171,7 @@
     <ClInclude Include="AesResponse.h" />
     <ClInclude Include="Base64.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="ClientException.h" />
     <ClInclude Include="CLILogger.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Connection.h" />
@@ -176,6 +179,7 @@
     <ClInclude Include="CRCResponse.h" />
     <ClInclude Include="FailedReconnectResponse.h" />
     <ClInclude Include="FailedRegisterResponse.h" />
+    <ClInclude Include="File.h" />
     <ClInclude Include="Hardcoded.h" />
     <ClInclude Include="ILogger.h" />
     <ClInclude Include="Request.h" />

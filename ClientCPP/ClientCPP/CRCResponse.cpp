@@ -1,8 +1,15 @@
 #include "CRCResponse.h"
 
+
 CRCResponse::CRCResponse(const Buffer& input) :
 	ResponsePayloadWithClientID(input)
 {
+	constexpr uint32_t CRC_PAYLOAD_SIZE = sizeof(m_contentSize) + sizeof(m_fileName) + sizeof(m_checksum);
+	if (m_payload.size() < CRC_PAYLOAD_SIZE)
+	{
+		throw std::exception("Input too short!");
+	}
+
 	auto p = m_payload.begin();
 
 	p = read_primitive(p, m_contentSize);

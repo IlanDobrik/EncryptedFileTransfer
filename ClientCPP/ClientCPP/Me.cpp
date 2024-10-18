@@ -1,7 +1,12 @@
 #include "Me.h"
-#include "Base64.h"
 
 #include <boost/algorithm/hex.hpp>
+
+#include "Base64.h"
+#include "File.h"
+
+#include "Common.h"
+
 
 
 void Me::reset()
@@ -23,43 +28,31 @@ bool Me::isEmpty()
 }
 
 Me Me::get(const std::string& mePath) {
-    std::ifstream configFile(mePath);
+    File configFile(mePath, std::ios_base::in);
 
-    if (!configFile.is_open()) {
-        return Me{};
-    }
+    auto clientname = convertTo<ClientName>(configFile.getLineBin());
 
-    Buffer clientNameBin = getLineBin(configFile);
-    ClientName clientname{0};
-    std::copy(clientNameBin.begin(), clientNameBin.end(), clientname.begin());
-
-    std::string clientIdString = getLine(configFile);
+    std::string clientIdString = configFile.getLine();
     if (!clientIdString.empty()) {
         clientIdString = boost::algorithm::unhex(clientIdString);
     }
-    ClientID clientId{ 0 };
-    std::copy(clientIdString.begin(), clientIdString.end(), clientId.begin());
+    auto clientId = convertTo<ClientID>(clientIdString);
 
     return Me{
         clientname,
         clientId,
-        Base64::decode(getLineBin(configFile)),
+        Base64::decode(configFile.getLineBin()),
     };
 }
 
 void Me::save(const Me& me, const std::string& mePath)
 {
-    std::ofstream configFile(mePath);
-    if (!configFile.is_open()) {
-        throw std::exception("Failed to open me file");
-    }
-
-    configFile << removeNulls(std::string(me.name.begin(), me.name.end()));
-    configFile << "\n";
-    configFile <<  boost::algorithm::hex(std::string(me.UUID.begin(), me.UUID.end()));
-    configFile << "\n";
+    File configFile(mePath, std::ios_base::out);
+    
+    configFile.write(removeNulls(std::string(me.name.begin(), me.name.end())));
+    configFile.write("\n");
+    configFile.write(boost::algorithm::hex(std::string(me.UUID.begin(), me.UUID.end())));
+    configFile.write("\n");
     auto aesBase64 = Base64::encode(me.WTF_IS_THIS);
-    configFile << std::string(aesBase64.begin(), aesBase64.end());
-
-    configFile.close();
+    configFile.write(std::string(aesBase64.begin(), aesBase64.end()));
 }

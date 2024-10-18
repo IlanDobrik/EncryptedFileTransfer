@@ -36,9 +36,10 @@ int main(void) {
         auto rsa = getRSA();
         auto connection = std::make_unique<Connection>(transferInfo.ipAddress.ip, transferInfo.ipAddress.port);
         auto logger = std::make_unique<CLILogger>();
+        auto file = std::make_unique<File>(transferInfo.filePath, std::ios_base::binary | std::ios_base::in);
 
-        auto client = Client(std::move(connection), std::move(logger), rsa, me, transferInfo);
-        client.run(transferInfo.filePath);
+        auto client = Client(std::move(connection), std::move(logger), std::move(file), rsa, me, transferInfo);
+        client.run();
     }
     catch (const std::exception& e) {
         std::cout << e.what();
