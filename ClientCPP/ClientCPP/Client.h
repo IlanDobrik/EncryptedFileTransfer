@@ -34,6 +34,7 @@ private:
 	void finish();
 
 	Response readResponse();
+	void attemptXTimes(const uint32_t maxRetries, std::function<void(void)> func);
 
 private:
 	std::unique_ptr<Connection> m_connection;

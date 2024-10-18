@@ -1,5 +1,7 @@
 #include "CRCResponse.h"
 
+#include "ClientException.h"
+
 
 CRCResponse::CRCResponse(const Buffer& input) :
 	ResponsePayloadWithClientID(input)
@@ -7,7 +9,7 @@ CRCResponse::CRCResponse(const Buffer& input) :
 	constexpr uint32_t CRC_PAYLOAD_SIZE = sizeof(m_contentSize) + sizeof(m_fileName) + sizeof(m_checksum);
 	if (m_payload.size() < CRC_PAYLOAD_SIZE)
 	{
-		throw std::exception("Input too short!");
+		throw ClientException("Payload too short to include CRC");
 	}
 
 	auto p = m_payload.begin();

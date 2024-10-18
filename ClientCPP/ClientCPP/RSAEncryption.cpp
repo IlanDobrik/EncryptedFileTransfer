@@ -3,6 +3,8 @@
 #include "cryptopp\cryptlib.h"
 
 #include "RSAEncryption.h"
+#include "ClientException.h"
+
 
 CryptoPP::AutoSeededRandomPool rng;
 
@@ -23,7 +25,7 @@ RSA::RSA(const std::string& privateKeyPath) {
     CryptoPP::RSA::PrivateKey privKey;
     std::ifstream privFile(privateKeyPath, std::ios::binary);
     if (!privFile.is_open()) {
-        throw std::exception("Failed to open private key file");
+        throw ClientException("Failed to open private key file");
     }
 
     CryptoPP::FileSource privSource(privFile, true);

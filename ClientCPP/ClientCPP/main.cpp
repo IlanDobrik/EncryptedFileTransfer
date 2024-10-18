@@ -42,7 +42,7 @@ int main(void) {
         client.run();
     }
     catch (const std::exception& e) {
-        std::cout << e.what();
+        std::cout << "Unkown exception: " << e.what();
     }
 
     return 0;

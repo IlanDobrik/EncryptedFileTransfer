@@ -11,7 +11,7 @@ using boost::asio::ip::tcp;
 class Connection {
 public:
 	Connection(const std::string& address, const std::string& port);
-	virtual ~Connection() = default;
+	virtual ~Connection();
 
 	Buffer read(const uint32_t size);
 	void write(const Buffer& data);

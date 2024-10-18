@@ -75,7 +75,6 @@ class ClientThread(threading.Thread):
             response = Responses.CRCResponse(self.client_id, content.__len__(), file_name, checksum)
             self.csocket.sendall(response.pack())
 
-
     def OkCrc(self, header: Requests.RequestHeader, payload: Requests.OkCRCRequest):
         logging.info(f"Client {header.clientID}: Checksum verified for {payload.file_name.strip(b"\x00")}")
 
@@ -84,6 +83,9 @@ class ClientThread(threading.Thread):
     
     def FinalBadCrc(self, header: Requests.RequestHeader, payload: Requests.FinalBadCRCRequest):
         logging.info(f"Client {header.clientID}: Checksum not verified for {payload.file_name.strip(b"\x00")} for the final time. Closing connection")
+        
+    def finish(self):
+        pass
 
     def run(self):
         try:
@@ -108,8 +110,9 @@ class ClientThread(threading.Thread):
                     self.OkCrc(header, Requests.OkCRCRequest(payload))
                 elif header.code == Requests.BadCRCRequest.CODE:
                     self.BadCrc(header, Requests.BadCRCRequest(payload))
+                elif header.code == Requests.FinalBadCRCRequest.CODE:
+                    self.FinalBadCrc(header, Requests.FinalBadCRCRequest(payload))
                 
-                    
         except Exception as e:
             self.generalFailure()
             logging.error(f"Caught exception {e}")

@@ -38,19 +38,6 @@ Buffer AES::decrypt(const Buffer& input) {
 }
 
 
-Buffer AES::GenerateKey()
-{
-	Buffer out(DEFAULT_KEYLENGTH, 0);
-	
-	for (auto& b : out) {
-		if (0 == _rdrand32_step(reinterpret_cast<unsigned int*>(&b))) {
-			throw std::exception("Failed to generate key");
-		}
-	}
-
-	return out;
-}
-
 Buffer AES::getKey() const
 {
 	return m_key;

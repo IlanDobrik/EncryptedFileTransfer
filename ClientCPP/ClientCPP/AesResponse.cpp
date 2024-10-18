@@ -1,11 +1,14 @@
 #include "AesResponse.h"
 
+#include "ClientException.h"
+
+
 AesResponse::AesResponse(const Buffer& input) :
-	ResponsePayloadWithClientID(input), m_aesKey(Buffer(m_payload.size(), 0)) // TODO incorrect - should be minus clientID
+	ResponsePayloadWithClientID(input), m_aesKey(Buffer(m_payload.size(), 0))
 {
 	if (m_payload.size() < m_aesKey.size())
 	{
-		throw std::exception("Input too short!");
+		throw ClientException("Payload is too short to contain AES key");
 	}
 
 	auto p = m_payload.begin();

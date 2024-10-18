@@ -1,10 +1,20 @@
 #include "Connection.h"
 
+#include "ClientException.h"
 #include "Response.h"
+
 
 Connection::Connection(const std::string& address, const std::string& port) :
 	m_ioContext(), m_socket(_initialize_socket(m_ioContext, address, port))
 { }
+
+Connection::~Connection()
+{
+	try {
+		m_socket.close();
+	}
+	catch (...) { }
+}
 
 Buffer Connection::read(const uint32_t size)
 {
@@ -22,7 +32,7 @@ void Connection::write(const Buffer& data)
 {
 	auto bytesWritten = boost::asio::write(m_socket, boost::asio::buffer(data.data(), data.size()));
 	if (bytesWritten != data.size()) {
-		throw std::exception("Failed to write all data");
+		throw ClientException("Failed to write all data");
 	}
 }
 

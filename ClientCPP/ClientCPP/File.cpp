@@ -2,13 +2,15 @@
 
 #include <filesystem>
 
+#include "ClientException.h"
+
 
 File::File(const std::string& filename, const std::ios_base::openmode mode) :
 	m_path(filename)
 { 
 	m_file = std::fstream(filename, mode);
 	if (!m_file.is_open()) {
-		throw std::exception("Failed to open file");
+		throw ClientException("Failed to open file " + filename);
 	}
 }
 

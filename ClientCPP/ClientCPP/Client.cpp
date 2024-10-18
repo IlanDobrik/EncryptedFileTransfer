@@ -3,6 +3,9 @@
 #include <iostream>
 #include <filesystem>
 
+#include "ClientException.h"
+#include "CRCException.h"
+
 #include "Response.h"
 
 #include "RegisterRequest.h"
@@ -53,7 +56,7 @@ void Client::run()
 		reconnect();
 	}
 
-	uploadFile();
+	attemptXTimes(MAX_RETRY_COUNT, [this]() { uploadFile(); });
 }
 
 void Client::registerClient()
@@ -69,10 +72,10 @@ void Client::registerClient()
 		exchangeKeys();
 		break;
 	case FAILED_REGISTER_RESPONSE_CODE:
-		throw std::exception("Failed to register");
+		throw ClientException("Failed to register");
 		break;
 	default:
-		throw std::exception("Bad response for registeration request");
+		throw ClientException("Bad response for registeration request");
 	}
 }
 
@@ -95,7 +98,7 @@ void Client::reconnect()
 		registerClient();
 		break;
 	default:
-		throw std::exception("Bad response for registeration request");
+		throw ClientException("Bad response for reconnect request");
 	}
 }
 
@@ -115,14 +118,14 @@ void Client::exchangeKeys()
 		break;
 
 	default:
-		throw std::exception("Bad response for key exchange request");
+		throw ClientException("Bad response for key exchange request");
 	}
 }
 
 void Client::uploadFile()
 {
 	m_logger->write("Attempting to upload file");
-	constexpr uint32_t MAX_PACKET_SIZE = 10;// 1024 * 1024; // 1GB
+	constexpr uint32_t MAX_PACKET_SIZE = 1024 * 1024; // 1GB
 
 	const uint64_t fileSize = m_file->getSize();
 	
@@ -166,14 +169,16 @@ void Client::CRCCheck(const CheckSum& checksum)
 	switch (data.responseHeader.getCode()) {
 	case CRC_RESPONSE_CODE: {
 		auto fileName = convertTo<FileName>(m_file->getName());
-		if (checksum == CRCResponse(data.responsePayload).getCheckSum()) {
+		auto responseChecksum = CRCResponse(data.responsePayload).getCheckSum();
+		if (checksum == responseChecksum) {
 			m_logger->write("Checksum is valid");
 			m_connection->write(OKCRCRequest(m_me.UUID, fileName).serialize());
 			finish();
 		}
 		else {
-			m_logger->write("Checksum is not valid");
+			m_logger->write("Checksum is not valid. Recived: " + std::to_string(responseChecksum) + " Expected: " + std::to_string(checksum));
 			m_connection->write(BadCRCRequest(m_me.UUID, fileName).serialize());
+			throw CRCException();
 		}
 		break;
 		}
@@ -181,7 +186,7 @@ void Client::CRCCheck(const CheckSum& checksum)
 		m_logger->write("Final attempt reached");
 		break;
 	default:
-		throw std::exception("Bad response for CRC request");
+		throw ClientException("Bad response for CRC request");
 	}
 }
 
@@ -194,10 +199,9 @@ void Client::finish()
 		m_logger->write("Closing connection");
 		break;
 	default:
-		throw std::exception("Bad response for finish");
+		throw ClientException("Bad response for finish");
 	}
 }
-
 
 Response Client::readResponse()
 {
@@ -207,4 +211,25 @@ Response Client::readResponse()
 	auto payload = m_connection->read(responseHeader.getPayloadSize());
 
 	return {header, payload};
+}
+
+void Client::attemptXTimes(const uint32_t maxRetries, std::function<void(void)> func)
+{
+	for (uint32_t currentAttempt = 0; currentAttempt < maxRetries; ++currentAttempt) {
+		try {
+			return func();
+		}
+		catch (CRCException& crce) {
+			// Do nothing - try again
+		}
+		catch (ClientException& ce) {
+			m_logger->write("General client exception: " + std::string(ce.what()));
+			return;
+		}
+
+		m_logger->write("Attempt " + std::to_string(currentAttempt + 1) + " failed");
+	}
+
+	m_logger->write("Final attempt reached - Notifing server");
+	m_connection->write(FinalBadCRCRequest(m_me.UUID, convertTo<FileName>(m_file->getName())).serialize());
 }

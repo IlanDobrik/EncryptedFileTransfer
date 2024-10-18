@@ -175,6 +175,7 @@
     <ClInclude Include="CLILogger.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Connection.h" />
+    <ClInclude Include="CRCException.h" />
     <ClInclude Include="CRCRequest.h" />
     <ClInclude Include="CRCResponse.h" />
     <ClInclude Include="FailedReconnectResponse.h" />
