@@ -14,9 +14,6 @@
     <ClCompile Include="RSAEncryption.cpp">
       <Filter>Encryption</Filter>
     </ClCompile>
-    <ClCompile Include="Base64.h">
-      <Filter>Encryption</Filter>
-    </ClCompile>
     <ClCompile Include="Base64.cpp">
       <Filter>Encryption</Filter>
     </ClCompile>
@@ -24,9 +21,6 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Request.cpp">
-      <Filter>Requests\Request</Filter>
-    </ClCompile>
-    <ClCompile Include="Request.h">
       <Filter>Requests\Request</Filter>
     </ClCompile>
     <ClCompile Include="RegisterRequest.cpp">
@@ -77,11 +71,14 @@
     <ClCompile Include="FailedRegisterResponse.cpp">
       <Filter>Responses\Register</Filter>
     </ClCompile>
-    <ClCompile Include="FailedRegisterResponse.h">
-      <Filter>Responses\Register</Filter>
-    </ClCompile>
     <ClCompile Include="CLILogger.cpp">
       <Filter>Logger\CLILogger</Filter>
+    </ClCompile>
+    <ClCompile Include="File.cpp">
+      <Filter>File</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientException.cpp">
+      <Filter>Excpetions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +148,12 @@
     <Filter Include="Logger\CLILogger">
       <UniqueIdentifier>{4527d756-c2b9-4a44-bbe7-670ba000bfab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File">
+      <UniqueIdentifier>{8d61870a-c376-4391-8ebb-1ea3b223bb03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Excpetions">
+      <UniqueIdentifier>{b3c5e3d7-84b2-4465-bd1e-402d39ec8b86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Me.h">
@@ -218,6 +221,24 @@
     </ClInclude>
     <ClInclude Include="CLILogger.h">
       <Filter>Logger\CLILogger</Filter>
+    </ClInclude>
+    <ClInclude Include="Base64.h">
+      <Filter>Encryption</Filter>
+    </ClInclude>
+    <ClInclude Include="Request.h">
+      <Filter>Requests\Request</Filter>
+    </ClInclude>
+    <ClInclude Include="FailedRegisterResponse.h">
+      <Filter>Responses\Register</Filter>
+    </ClInclude>
+    <ClInclude Include="File.h">
+      <Filter>File</Filter>
+    </ClInclude>
+    <ClInclude Include="CRCException.h">
+      <Filter>Excpetions</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientException.h">
+      <Filter>Excpetions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -7,14 +7,12 @@ import DB
 import Utils
 
 
-def listen4clients(listenPort):
+def listen4clients(listenPort, db):
     # creating listen socket
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(('', listenPort))
     logging.info(f"Sarted listening on port {listenPort}")
-
-    db = DB.DB()
 
     # creating client sockets    
     while True:
@@ -27,7 +25,9 @@ def main():
     logging.getLogger().setLevel(logging.INFO)
     
     config = read_config()
-    listen4clients(config.port)
+    with DB.DB("./defensive.db") as db:
+        listen4clients(config.port, db)
+
 
 if __name__ == '__main__':
     try:

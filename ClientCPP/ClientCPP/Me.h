@@ -9,7 +9,7 @@
 struct Me {
     ClientName name;
     ClientID UUID; 
-    Buffer WTF_IS_THIS;
+    Buffer WTF_IS_THIS; 
 
     void reset();
     bool isEmpty();

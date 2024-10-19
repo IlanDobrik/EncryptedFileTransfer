@@ -125,6 +125,8 @@ void Client::exchangeKeys()
 void Client::uploadFile()
 {
 	m_logger->write("Attempting to upload file");
+	m_file->seekStart();
+
 	constexpr uint32_t MAX_PACKET_SIZE = 1024 * 1024; // 1GB
 
 	const uint64_t fileSize = m_file->getSize();
@@ -149,7 +151,7 @@ void Client::uploadFile()
 void Client::uploadPacket(const Buffer& packet, const CurrentPacketNumber current, const TotalPacketNumber total)
 {
 	m_logger->write("Uploding packet " + std::to_string(current) + " out of " + std::to_string(total));
-	OriginalSize originalFileSize = static_cast<OriginalSize>(packet.size());
+	OriginalSize originalFileSize = m_file->getSize();
 
 	Buffer encryptedPacket = m_aes->encrypt(packet);
 	Buffer decryptedPacket = m_aes->decrypt(encryptedPacket);

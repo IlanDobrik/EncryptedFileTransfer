@@ -14,11 +14,13 @@ public:
 	Buffer read(const uint32_t size);
 	void write(const std::string& data);
 
-	ContentSize getSize() const;
+	OriginalSize getSize() const;
 	std::string getName() const;
 
 	std::string getLine();
 	Buffer getLineBin();
+
+	void seekStart();
 
 private:
 	const std::string m_path;

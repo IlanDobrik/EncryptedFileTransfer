@@ -38,7 +38,7 @@ void File::write(const std::string& data)
 	m_file << data.data();
 }
 
-ContentSize File::getSize() const
+OriginalSize File::getSize() const
 {
 	return static_cast<ContentSize>(std::filesystem::file_size(m_path));
 }
@@ -67,4 +67,10 @@ Buffer File::getLineBin()
 	std::getline(m_file, line);
 
 	return Buffer(line.begin(), line.end());;
+}
+
+void File::seekStart()
+{
+	m_file.clear();
+	m_file.seekg(0);
 }
