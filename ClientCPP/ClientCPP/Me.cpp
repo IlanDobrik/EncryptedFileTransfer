@@ -1,11 +1,12 @@
 #include "Me.h"
 
+#include <filesystem>
 #include <boost/algorithm/hex.hpp>
 
+#include "Common.h"
 #include "Base64.h"
 #include "File.h"
 
-#include "Common.h"
 
 
 
@@ -28,6 +29,10 @@ bool Me::isEmpty()
 }
 
 Me Me::get(const std::string& mePath) {
+    if (!std::filesystem::exists(mePath)) {
+        return Me{};
+    }
+
     File configFile(mePath, std::ios_base::in);
 
     auto clientname = convertTo<ClientName>(configFile.getLineBin());

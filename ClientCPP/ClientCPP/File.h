@@ -6,6 +6,7 @@
 #include "Common.h"
 #include "Hardcoded.h"
 
+
 class File {
 public:
 	explicit File(const std::string& filename, const std::ios_base::openmode mode);

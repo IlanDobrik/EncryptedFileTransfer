@@ -37,8 +37,11 @@ class DB:
     INSERT_CLIENT = '''INSERT OR REPLACE INTO Clients VALUES(?, ?, ?, ?, ?)'''
     INSERT_FILE = '''INSERT OR REPLACE INTO files VALUES(?, ?, ?, ?)'''
     
-    GET_CLIENT = '''SELECT * FROM Clients WHERE ID=?'''
+    GET_CLIENT = '''SELECT * FROM Clients WHERE ID=? AND Name=?'''
     GET_FILE = '''SELECT * FROM Files WHERE ID=?'''
+    
+    CHECK_CLIENT_NAME = '''SELECT * FROM Clients WHERE Name=?'''
+    
     
     def __init__(self, path):
         self.conn = sqlite3.connect(path, check_same_thread=False)
@@ -67,11 +70,20 @@ class DB:
         self.cursor.execute(self.INSERT_FILE, (id, filename, path, verified))
         self.conn.commit()
 
-    def get_client(self, client_id) -> ClientsRow:
-        return ClientsRow(*self.cursor.execute(self.GET_CLIENT, (client_id,)).fetchone())
+    def get_client(self, client_id, client_name) -> ClientsRow:
+        res = self.cursor.execute(self.GET_CLIENT, (client_id, client_name,)).fetchone()
+        if res == None:
+            return None
+        return ClientsRow(*res)
     
     def get_file(self, client_id) -> FilesRow:
-        return FilesRow(*self.cursor.execute(self.GET_FILE, (client_id,)).fetchone())
+        res = self.cursor.execute(self.GET_FILE, (client_id, )).fetchone()
+        if res == None:
+            return None
+        return FilesRow(*res)
 
-    def exists(self, client_id):
-        return self.get_client(client_id) is not None
+    def exists(self, client_id, client_name):
+        return self.get_client(client_id, client_name) is not None
+    
+    def name_exists(self, client_name):
+        return self.cursor.execute(self.CHECK_CLIENT_NAME, (client_name, )).fetchone() is not None

@@ -48,15 +48,20 @@ Client::~Client()
 
 void Client::run()
 {
-	if (m_me.isEmpty()) {
-		registerClient();
-	}
-	else {
-		// Already recived UUID from server
-		reconnect();
-	}
+	try {
+		if (m_me.isEmpty()) {
+			registerClient();
+		}
+		else {
+			// Already recived UUID from server
+			reconnect();
+		}
 
-	attemptXTimes(MAX_RETRY_COUNT, [this]() { uploadFile(); });
+		attemptXTimes(MAX_RETRY_COUNT, [this]() { uploadFile(); });
+	}
+	catch (ClientException& ce) {
+		m_logger->write(ce.what());
+	}
 }
 
 void Client::registerClient()
@@ -95,6 +100,7 @@ void Client::reconnect()
 	case FAILED_RECONNECT_RESPONSE_CODE:
 		m_logger->write("Reconnect rejected");
 		m_me.reset();
+		m_me.name = m_transferInfo.clientName;
 		registerClient();
 		break;
 	default:
@@ -223,10 +229,6 @@ void Client::attemptXTimes(const uint32_t maxRetries, std::function<void(void)> 
 		}
 		catch (CRCException& crce) {
 			// Do nothing - try again
-		}
-		catch (ClientException& ce) {
-			m_logger->write("General client exception: " + std::string(ce.what()));
-			return;
 		}
 
 		m_logger->write("Attempt " + std::to_string(currentAttempt + 1) + " failed");

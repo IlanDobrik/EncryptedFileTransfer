@@ -10,6 +10,8 @@ import Requests
 import Responses
 from DB import DB
 
+class ClientException(Exception):
+    pass
 
 class ClientThread(threading.Thread):
     def __init__(self, db, clientAddress: socket.socket, clientsocket: socket.AddressInfo):
@@ -23,24 +25,32 @@ class ClientThread(threading.Thread):
         self.symetric_key = None
         logging.info(f"Recived connection from {clientAddress}")
         
-    def validate(self, header: Requests.RequestHeader):
+    def validate_client_id(self, header: Requests.RequestHeader):
         if self.client_id != header.clientID:
-            raise "Different client id"
+            raise ClientException("Different client id")
+    
+    def validate_aes(self):
+        if self.symetric_key == None:
+            raise ClientException("Client didnt register/reconnect")
     
     def register(self, header: Requests.RequestHeader, payload : Requests.RegisterRequest):
-        if self.db.exists(payload.name):
+        client_name = payload.name.strip(b"\x00")
+        if self.db.name_exists(payload.name):
             response = Responses.FailedRegisterResponse()
-            logging.info(f"Client {payload.name.strip(b"\x00")} failed to register")
+            logging.info(f"Client {client_name} failed to register")
         else:
             client_id = Utils.generateUUID()
             response = Responses.SuccessfulRegisterResponse(client_id)
             self.client_id, self.client_name = client_id, payload.name
-            self.db.insert_client(header.clientID, payload.name, b'', b'')
-            logging.info(f"Client {payload.name.strip(b"\x00")} with id {client_id} registered successfuly")
+            self.db.insert_client(client_id, payload.name, b'', b'')
+            logging.info(f"Client {client_name} with id {client_id} registered successfuly")
         self.csocket.sendall(response.pack())
         
     def send_aes(self, header: Requests.RequestHeader, payload: Requests.PublicKeyRequest):
-        self.validate(header)
+        self.validate_client_id(header)
+        if payload.name != self.client_name:
+            raise ClientException("Different client name")
+        
         self.symetric_key = SymetricKey(payload.publicKey)
         response = Responses.EncryptedAESResponse(header.clientID, self.symetric_key.get_encrypted_session_key())
         self.csocket.sendall(response.pack())
@@ -48,15 +58,16 @@ class ClientThread(threading.Thread):
 
     def reconnect(self, header: Requests.RequestHeader, payload: Requests.ReConnectRequest):
         client_id = header.clientID
-        if not self.db.exists(client_id):
+        client_name = payload.name.strip(b"\x00")
+        if not self.db.exists(client_id, client_name):
             response = Responses.RejectedReconnectResponse(client_id)
-            logging.info(f"Client {client_id}: failed to reconnect")
+            logging.info(f"Client {client_name} with id {client_id} : failed to reconnect")
         else:
-            client = self.db.get_client(client_id)
+            client = self.db.get_client(client_id, client_name)
             self.symetric_key = SymetricKey(client.public_key)
             response = Responses.SuccessfulReconnectResponse(client_id, self.symetric_key.get_encrypted_session_key())
-            self.client_id = client_id
-            logging.info(f"Client {client_id}: reconnected successfuly")
+            self.client_id, self.client_name = client_id, payload.name
+            logging.info(f"Client {client_name} with id {client_id}: reconnected successfuly")
         self.csocket.sendall(response.pack())
 
     def generalFailure(self):
@@ -64,16 +75,25 @@ class ClientThread(threading.Thread):
         self.csocket.sendall(Responses.GeneralFailureResponse().pack())
 
     def get_file(self, header: Requests.RequestHeader, payload: Requests.SendFileRequest):
-        self.validate(header)
-        # TODO if no symetric key = fail
+        self.validate_client_id(header)
+        self.validate_aes()
+        
         content = self.symetric_key.decrypt(payload.content)
         file_name = payload.file_name.strip(b"\x00")
         
         logging.info(f"Client {header.clientID}: uploding {file_name} {payload.current_chunk}/{payload.total_chunks}")
+        self.db.insert_file(header.clientID, file_name, file_name)
 
+        # Empty the file
+        if payload.current_chunk == 1:
+            with open(file_name, "w") as f:
+                pass
+
+        # Write data
         with open(file_name, "ba+") as f:
             f.write(content)
             
+        # If final chunk - send CRC
         if payload.current_chunk == payload.total_chunks:
             with open(file_name, "rb") as f:
                 content = f.read()
@@ -83,16 +103,24 @@ class ClientThread(threading.Thread):
             self.csocket.sendall(response.pack())
 
     def OkCrc(self, header: Requests.RequestHeader, payload: Requests.OkCRCRequest):
-        self.validate(header)
+        self.validate_client_id(header)
+        self.validate_aes()
+        
+        file_name = payload.file_name.strip(b"\x00")
+        self.db.insert_file(header.clientID, file_name, file_name, True)
         logging.info(f"Client {header.clientID}: Checksum verified for {payload.file_name.strip(b"\x00")}")
         self.finish()
 
     def BadCrc(self, header: Requests.RequestHeader, payload: Requests.BadCRCRequest):
-        self.validate(header)
+        self.validate_client_id(header)
+        self.validate_aes()
+        
         logging.info(f"Client {header.clientID}: Checksum not verified for {payload.file_name.strip(b"\x00")}")
     
     def FinalBadCrc(self, header: Requests.RequestHeader, payload: Requests.FinalBadCRCRequest):
-        self.validate(header)
+        self.validate_client_id(header)
+        self.validate_aes()
+        
         logging.info(f"Client {header.clientID}: Checksum not verified for {payload.file_name.strip(b"\x00")} for the final time. Closing connection")
         self.finish()
         
@@ -127,6 +155,12 @@ class ClientThread(threading.Thread):
                     self.FinalBadCrc(header, Requests.FinalBadCRCRequest(payload))
         except ConnectionResetError as e:
             logging.error(f"Client disconnected {self.caddress}")
+            return
+        except ClientException as e:
+            self.generalFailure()
+            logging.error(f"Caught client exception {e}")
+            return
         except Exception as e:
             self.generalFailure()
-            logging.error(f"Caught exception {e}")
+            logging.error(f"Caught general exception {e}")
+            return
