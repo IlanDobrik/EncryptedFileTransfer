@@ -120,7 +120,7 @@ void Client::exchangeKeys()
 		m_aes = std::make_unique<AES>(
 			m_rsa.decrypt(
 				AesResponse(data.responsePayload).getAesKey()));
-		m_me.WTF_IS_THIS = m_aes->getKey();
+		m_me.aesKey = m_aes->getKey();
 		break;
 
 	default:

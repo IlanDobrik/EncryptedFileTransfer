@@ -59,6 +59,6 @@ void Me::save(const Me& me, const std::string& mePath)
     configFile.write("\n");
     configFile.write(boost::algorithm::hex(std::string(me.UUID.begin(), me.UUID.end())));
     configFile.write("\n");
-    auto aesBase64 = Base64::encode(me.WTF_IS_THIS);
+    auto aesBase64 = Base64::encode(me.aesKey);
     configFile.write(std::string(aesBase64.begin(), aesBase64.end()));
 }
