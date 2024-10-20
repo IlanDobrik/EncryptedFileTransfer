@@ -1,5 +1,6 @@
 #include <array>
 #include <memory>
+#include <iostream>
 
 #include "Common.h"
 #include "Hardcoded.h"
