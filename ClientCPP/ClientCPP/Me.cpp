@@ -36,6 +36,7 @@ Me Me::get(const std::string& mePath) {
     File configFile(mePath, std::ios_base::in);
 
     auto clientname = convertTo<ClientName>(configFile.getLineBin());
+    clientname[clientname.size() - 1] = 0; // Ensure null terminator
 
     std::string clientIdString = configFile.getLine();
     if (!clientIdString.empty()) {

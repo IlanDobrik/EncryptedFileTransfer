@@ -13,7 +13,9 @@ IPAddress getIP(File& transferInfoFile) {
 }
 
 ClientName getClientName(File& transferInfoFile) {
-    return convertTo<ClientName>(transferInfoFile.getLineBin());
+    ClientName clientname = convertTo<ClientName>(transferInfoFile.getLineBin());
+    clientname[clientname.size() - 1] = 0; // Ensure null terminator
+    return clientname;
 }
 
 TransferInfo getTransferInfo(const std::string& transferInfoPath) {
